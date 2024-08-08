@@ -16,7 +16,7 @@ KC - Kundechef
 
 ## Onsdag
 
-**SM(Alexander):**
+**SM(Alexander):** Var tilstede, skabte denne logbog, er gode vibes på holdet.
 
 **PO(Reimar):** Sat git repository op med kravspec osv., oprettet tasks, planlagt præsentationsmøde
 
@@ -24,9 +24,9 @@ KC - Kundechef
 
 ## Torsdag
 
-**SM(Alexander):**
+**SM(Alexander):** Hjalp lidt til med Figma og tilføjede scene transitions imellem menu'erne - Det meste af dagen var syg
 
-**PO(Reimar):**
+**PO(Reimar):** Hjalp til med Figma og lavede diverse sider og gjorde dem klar til scene transitions 
 
 **KC(Phillip):**
 
