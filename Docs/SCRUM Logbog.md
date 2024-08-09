@@ -30,9 +30,9 @@ KC - Kundechef
 
 **KC(Phillip):**
 
-# Fredag
+## Fredag
 
-**SM(Alexander):**
+**SM(Alexander):** Sad med til Møde som Kunde sammen med Reimar.
 
 **PO(Reimar):**
 
