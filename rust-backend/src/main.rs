@@ -1,13 +1,24 @@
-use actix_web::{get, Responder, HttpResponse, HttpServer, App};
+use actix_web::{get, Responder, HttpResponse, HttpServer, App, web};
+use std::sync::{Mutex, Arc};
 
 mod embedded {
     use refinery::embed_migrations;
     embed_migrations!("./migrations");
 }
 
+struct AppData {
+    database: Arc<Mutex<rusqlite::Connection>>,
+}
+
 #[get("/hc")]
-async fn healthcheck() -> impl Responder {
-    HttpResponse::Ok().body("OK")
+async fn healthcheck(data: web::Data<AppData>) -> impl Responder {
+    let db = data.database.lock().unwrap();
+
+    match db.pragma_query(None, "integrity_check", |_| Ok(())) {
+        Ok(_) => HttpResponse::Ok().body("OK"),
+        Err(_) => HttpResponse::InternalServerError().body("Error"),
+    }
+
 }
 
 #[actix_web::main]
@@ -22,14 +33,22 @@ async fn main() -> std::io::Result<()> {
 
     println!("Opening database: {}", database_path);
 
-    let mut conn = rusqlite::Connection::open(database_path).unwrap();
+    let mut conn = rusqlite::Connection::open(database_path.clone()).unwrap();
 
     embedded::migrations::runner().run(&mut conn).unwrap();
 
     println!("Starting web server at port {}", port);
 
     HttpServer::new(|| {
+        let database_path = std::env::var("RUST_BACKEND_DB")
+            .unwrap_or("database.sqlite3".to_string());
+
+        let conn = Arc::new(Mutex::new(rusqlite::Connection::open(database_path).unwrap()));
+
         App::new()
+            .app_data(web::Data::new(AppData {
+                database: conn,
+            }))
             .service(healthcheck)
     })
     .bind(("0.0.0.0", port))?
