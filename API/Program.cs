@@ -37,8 +37,10 @@ namespace API
 
             IConfiguration Configuration = builder.Configuration;
 
-            var connectionString = Configuration.GetConnectionString("DefaultConnection") ?? Environment.GetEnvironmentVariable("DefaultConnection");
+            var connectionString = Configuration.GetConnectionString("DefaultConnection") ?? Environment.GetEnvironmentVariable("DEFAULT_CONNECTION");
             builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlite(connectionString));
+
+            Console.WriteLine("Connecting to database with connection string: " + connectionString);
 
             var app = builder.Build();
 
