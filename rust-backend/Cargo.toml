@@ -6,5 +6,5 @@ edition = "2021"
 [dependencies]
 actix-web = "4"
 refinery = { version = "0.8.14", features = ["rusqlite"] }
-rusqlite = "0.31"
+rusqlite = { version = "0.31", features = ["bundled"] }
 
