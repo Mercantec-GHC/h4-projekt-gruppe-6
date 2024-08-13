@@ -20,21 +20,63 @@ KC - Kundechef
 
 **PO(Reimar):** Sat git repository op med kravspec osv., oprettet tasks, planlagt præsentationsmøde
 
-**KC(Phillip):**
+**KC(Philip):**
 
 ## Torsdag
 
 **SM(Alexander):** Hjalp lidt til med Figma og tilføjede scene transitions imellem menu'erne - Det meste af dagen var syg
 
-**PO(Reimar):** Hjalp til med Figma og lavede diverse sider og gjorde dem klar til scene transitions 
+**PO(Reimar):** Hjalp til med Figma og lavede diverse sider og gjorde dem klar til scene transitions
 
-**KC(Phillip):**
+**KC(Philip):**
 
 ## Fredag
 
 **SM(Alexander):** Sad med til Møde som Kunde sammen med Reimar.
 
-**PO(Reimar):**
+**PO(Reimar):** Var til kundemøder
 
-**KC(Phillip):**
+**KC(Philip):**
+
+# Uge 33
+
+## Mandag
+
+**PO(Alexander):**
+
+**KC(Reimar):** Sat backenden op med database og en healthcheck controller
+
+**SM(Philip):**
+
+## Tirsdag
+
+**PO(Alexander):**
+
+**KC(Reimar):** Deployet til production og lavet release script
+
+**SM(Philip):**
+
+## Onsdag
+
+**PO(Alexander):**
+
+**KC(Reimar):**
+
+**SM(Philip):**
+
+## Torsdag
+
+**PO(Alexander):**
+
+**KC(Reimar):**
+
+**SM(Philip):**
+
+## Fredag
+
+**PO(Alexander):**
+
+**KC(Reimar):**
+
+**SM(Philip):**
 
