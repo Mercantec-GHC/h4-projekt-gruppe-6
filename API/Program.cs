@@ -1,3 +1,6 @@
+using API.Application.Users.Commands;
+using API.Application.Users.Queries;
+using API.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace API
@@ -24,6 +27,13 @@ namespace API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddScoped<QueryAllUsers>();
+            builder.Services.AddScoped<QueryUserById>();
+            builder.Services.AddScoped<CreateUser>();
+            builder.Services.AddScoped<UpdateUser>();
+            builder.Services.AddScoped<DeleteUser>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
 
             IConfiguration Configuration = builder.Configuration;
 
