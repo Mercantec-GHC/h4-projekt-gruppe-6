@@ -42,7 +42,7 @@ KC - Kundechef
 
 ## Mandag
 
-**PO(Alexander):**
+**PO(Alexander):** mødte op
 
 **KC(Reimar):** Sat backenden op med database og en healthcheck controller
 
@@ -50,17 +50,17 @@ KC - Kundechef
 
 ## Tirsdag
 
-**PO(Alexander):**
+**PO(Alexander):** Var syg :))))
 
-**KC(Reimar):** Deployet til production og lavet release script
+**KC(Reimar):** Deployet til production og lavet release script, startede på Rust Backend
 
 **SM(Philip):**
 
 ## Onsdag
 
-**PO(Alexander):**
+**PO(Alexander):** Hjalp til med integration tests i bash
 
-**KC(Reimar):**
+**KC(Reimar):** Lavede integration tests i bash
 
 **SM(Philip):**
 
