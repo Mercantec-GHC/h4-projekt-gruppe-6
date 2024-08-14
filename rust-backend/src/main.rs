@@ -1,7 +1,6 @@
 mod auth;
 
 use actix_web::{get, Responder, HttpResponse, HttpServer, App, web};
-use actix_web::middleware;
 use std::sync::{Mutex, Arc};
 use crate::auth::AuthorizedUser;
 
@@ -26,8 +25,8 @@ async fn healthcheck(data: web::Data<AppData>) -> impl Responder {
 }
 
 #[get("/authorized")]
-async fn authorized(_: AuthorizedUser) -> impl Responder {
-    HttpResponse::Ok().body("Authorized")
+async fn authorized(auth: AuthorizedUser) -> impl Responder {
+    HttpResponse::Ok().body(format!("Authorized as {} ({})", auth.username, auth.user_id))
 }
 
 #[actix_web::main]

@@ -4,6 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+base64 = "0.22.1"
+sha2 = "0.10.8"
+hmac = "0.12.1"
+serde_json = "1.0.124"
 actix-web = "4"
 actix-utils = "3.0.1"
 refinery = { version = "0.8.14", features = ["rusqlite"] }
