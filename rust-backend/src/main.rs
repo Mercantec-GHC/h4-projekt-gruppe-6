@@ -1,5 +1,9 @@
+mod auth;
+
 use actix_web::{get, Responder, HttpResponse, HttpServer, App, web};
+use actix_web::middleware;
 use std::sync::{Mutex, Arc};
+use crate::auth::AuthorizedUser;
 
 mod embedded {
     use refinery::embed_migrations;
@@ -19,6 +23,11 @@ async fn healthcheck(data: web::Data<AppData>) -> impl Responder {
         Err(_) => HttpResponse::InternalServerError().body("Error"),
     }
 
+}
+
+#[get("/authorized")]
+async fn authorized(_: AuthorizedUser) -> impl Responder {
+    HttpResponse::Ok().body("Authorized")
 }
 
 #[actix_web::main]
@@ -50,8 +59,10 @@ async fn main() -> std::io::Result<()> {
                 database: conn,
             }))
             .service(healthcheck)
+            .service(authorized)
     })
     .bind(("0.0.0.0", port))?
     .run()
     .await
 }
+
