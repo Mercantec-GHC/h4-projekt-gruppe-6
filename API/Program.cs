@@ -1,7 +1,10 @@
 using API.Application.Users.Commands;
 using API.Application.Users.Queries;
 using API.Persistence.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace API
 {
@@ -33,9 +36,34 @@ namespace API
             builder.Services.AddScoped<CreateUser>();
             builder.Services.AddScoped<UpdateUser>();
             builder.Services.AddScoped<DeleteUser>();
+            builder.Services.AddScoped<LoginUser>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
 
+
             IConfiguration Configuration = builder.Configuration;
+
+            // Configure JWT Authentication
+            builder.Services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x =>
+            {
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = Configuration["JwtSettings:Issuer"],
+                    ValidAudience = Configuration["JwtSettings:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey
+                    (
+                    Encoding.UTF8.GetBytes(Configuration["JwtSettings:Key"])
+                    ),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true
+                };
+            });
 
             var connectionString = Configuration.GetConnectionString("DefaultConnection") ?? Environment.GetEnvironmentVariable("DEFAULT_CONNECTION");
             builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlite(connectionString));

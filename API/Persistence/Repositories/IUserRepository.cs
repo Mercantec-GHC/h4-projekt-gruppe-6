@@ -8,6 +8,7 @@ namespace API.Persistence.Repositories
         Task<bool> DeleteUserAsync(string id);
         Task<List<User>> QueryAllUsersAsync();
         Task<User> QueryUserByIdAsync(string id);
+        Task<User> QueryUserByEmailAsync(string email);
         Task<bool> UpdateUserAsync(User user);
     }
 }

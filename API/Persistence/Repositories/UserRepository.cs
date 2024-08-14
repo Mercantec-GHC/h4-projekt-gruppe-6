@@ -1,5 +1,6 @@
 ﻿using API.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 
 namespace API.Persistence.Repositories
 {
@@ -70,5 +71,10 @@ namespace API.Persistence.Repositories
             return true;
         }
 
+        public async Task<User> QueryUserByEmailAsync(string email)
+        {
+            return await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
+            
+        }
     }
 }

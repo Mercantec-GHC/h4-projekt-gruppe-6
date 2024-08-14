@@ -1,8 +1,13 @@
 ﻿using API.Application.Users.Commands;
 using API.Application.Users.Queries;
 using API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace API.Controllers
@@ -16,20 +21,31 @@ namespace API.Controllers
         private readonly CreateUser _createUser;
         private readonly UpdateUser _updateUser;
         private readonly DeleteUser _deleteUser;
+        private readonly LoginUser _loginUser;
 
         public UsersController(
             QueryAllUsers queryAllUsers,
             QueryUserById queryUserById,
             CreateUser createUser,
             UpdateUser updateUser,
-            DeleteUser deleteUser)
+            DeleteUser deleteUser,
+            LoginUser loginUser)
         {
             _queryAllUsers = queryAllUsers;
             _queryUserById = queryUserById;
             _createUser = createUser;
             _updateUser = updateUser;
             _deleteUser = deleteUser;
+            _loginUser = loginUser;
         }
+
+        // POST: api/Users/login
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginDTO login)
+        {
+            return await _loginUser.Handle(login);
+        }
+
         // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<List<UserDTO>>> GetUsers()
@@ -67,6 +83,6 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteUser(string id)
         {
             return await _deleteUser.Handle(id);
-        } 
+        }
     }
 }
