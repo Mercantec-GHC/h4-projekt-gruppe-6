@@ -1,0 +1,14 @@
+[Unit]
+Description=Skantravels Rust
+After=network.target
+
+[Service]
+Environment=RUST_BACKEND_PORT=5002
+Environment=RUST_BACKEND_DB=/home/reimar/skantravels/database-rust.sqlite3
+ExecStart=/home/reimar/skantravels/skantravels
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
+RequiredBy=network.target
+

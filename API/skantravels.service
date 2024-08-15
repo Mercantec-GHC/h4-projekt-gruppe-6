@@ -1,0 +1,16 @@
+[Unit]
+Description=Skantravels .NET
+After=network.target
+
+[Service]
+Environment=DOTNET_ROOT=/home/reimar/.dotnet
+Environment=PATH=$PATH:/home/reimar/.dotnet
+Environment=DEFAULT_CONNECTION="Data Source=/home/reimar/skantravels/database.sqlite3"
+ExecStartPre=/home/reimar/skantravels/efbundle
+ExecStart=/home/reimar/skantravels/API --urls=http://0.0.0.0:5001
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
+RequiredBy=network.target
+
