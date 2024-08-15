@@ -20,7 +20,7 @@ KC - Kundechef
 
 **PO(Reimar):** Sat git repository op med kravspec osv., oprettet tasks, planlagt præsentationsmøde
 
-**KC(Philip):**
+**KC(Philip):*Vi havde møde med vores programmøre der laver vores ide. Jeg hjalp dem med de spørgsmål de havde*
 
 ## Torsdag
 
@@ -28,7 +28,7 @@ KC - Kundechef
 
 **PO(Reimar):** Hjalp til med Figma og lavede diverse sider og gjorde dem klar til scene transitions
 
-**KC(Philip):**
+**KC(Philip):*Havde en kort snak med daniel fra programmerings gruppen*
 
 ## Fredag
 
@@ -36,7 +36,7 @@ KC - Kundechef
 
 **PO(Reimar):** Var til kundemøder
 
-**KC(Philip):**
+**KC(Philip):*Sov over mig, så jeg kom ikke til mødet med programmerings gruppen. Dog så jeg stadig deres design og jeg var virkelig tilfreds!!*
 
 # Uge 33
 
@@ -46,7 +46,7 @@ KC - Kundechef
 
 **KC(Reimar):** Sat backenden op med database og en healthcheck controller
 
-**SM(Philip):**
+**SM(Philip):*Vi snakkede om opsætning i gruppen og lavede filstruktur*
 
 ## Tirsdag
 
@@ -54,7 +54,7 @@ KC - Kundechef
 
 **KC(Reimar):** Deployet til production og lavet release script, startede på Rust Backend
 
-**SM(Philip):**
+**SM(Philip):*Login blev lavet og jeg fik besked af programmerings gruppen at de manglede en liste over beatboxers. Den sendte jeg til dem*
 
 ## Onsdag
 
@@ -62,7 +62,7 @@ KC - Kundechef
 
 **KC(Reimar):** Lavede integration tests i bash
 
-**SM(Philip):**
+**SM(Philip):*Vi sad sammen i gruppen og rodedet med scripts til at teste vores loginsystem. Det virkede til sidst*
 
 ## Torsdag
 
@@ -70,7 +70,7 @@ KC - Kundechef
 
 **KC(Reimar):**
 
-**SM(Philip):**
+**SM(Philip):*Var med til et møde sammen med reimer da programmeringsgruppen skulle bruge hjælp. Tilføjede selv authorization på swagger appikationen*
 
 ## Fredag
 
