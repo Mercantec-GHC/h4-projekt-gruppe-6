@@ -49,15 +49,12 @@ async fn main() -> std::io::Result<()> {
 
     println!("Starting web server at port {}", port);
 
-    HttpServer::new(|| {
-        let database_path = std::env::var("RUST_BACKEND_DB")
-            .unwrap_or("database.sqlite3".to_string());
+    let conn = Arc::new(Mutex::new(rusqlite::Connection::open(database_path).unwrap()));
 
-        let conn = Arc::new(Mutex::new(rusqlite::Connection::open(database_path).unwrap()));
-
+    HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(AppData {
-                database: conn,
+                database: conn.clone(),
             }))
             .service(healthcheck)
             .service(authorized)
