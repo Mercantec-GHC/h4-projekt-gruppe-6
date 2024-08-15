@@ -31,6 +31,8 @@ async fn authorized(auth: AuthorizedUser) -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    let _ = dotenvy::dotenv();
+
     let port = std::env::var("RUST_BACKEND_PORT")
         .ok()
         .and_then(|port| port.parse::<u16>().ok())

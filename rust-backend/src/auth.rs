@@ -30,6 +30,8 @@ impl FromRequest for AuthorizedUser {
 }
 
 fn get_authorized_user(req: &HttpRequest) -> Option<AuthorizedUser> {
+    let secret = std::env::var("JWT_SECRET").expect("JWT_SECRET must be provided");
+
     let token = req.headers()
         .get("Authorization")
         .and_then(|value| value.to_str().ok())
@@ -51,7 +53,7 @@ fn get_authorized_user(req: &HttpRequest) -> Option<AuthorizedUser> {
     let payload: Value = serde_json::from_slice(&URL_SAFE_NO_PAD.decode(jwt_parts.get(1).unwrap()).ok()?).ok()?;
     let signature = URL_SAFE_NO_PAD.decode(jwt_parts.get(2).unwrap()).ok()?;
 
-    let mut mac = Hmac::<Sha256>::new_from_slice("DenHerMåAldrigVæreOffentligKunIDetteDemoProjekt".as_bytes()).ok()?;
+    let mut mac = Hmac::<Sha256>::new_from_slice(secret.as_bytes()).ok()?;
     mac.update(format!("{}.{}", jwt_parts.get(0).unwrap(), jwt_parts.get(1).unwrap()).as_bytes());
 
     if mac.verify_slice(&signature).is_err() {
