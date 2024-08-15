@@ -1,8 +1,10 @@
 mod auth;
+mod models;
 
 use actix_web::{get, Responder, HttpResponse, HttpServer, App, web};
-use std::sync::{Mutex, Arc};
-use crate::auth::AuthorizedUser;
+use std::sync::{Mutex, MutexGuard, Arc};
+use auth::AuthorizedUser;
+use models::Favorite;
 
 mod embedded {
     use refinery::embed_migrations;
@@ -27,6 +29,26 @@ async fn healthcheck(data: web::Data<AppData>) -> impl Responder {
 #[get("/authorized")]
 async fn authorized(auth: AuthorizedUser) -> impl Responder {
     HttpResponse::Ok().body(format!("Authorized as {} ({})", auth.username, auth.user_id))
+}
+
+#[get("/favorites")]
+async fn favorites(auth: AuthorizedUser, data: web::Data<AppData>) -> impl Responder {
+    let db = data.database.lock().unwrap();
+
+    match get_favorites(db, auth.user_id) {
+        Some(favorites) => HttpResponse::Ok().json(favorites),
+        None => HttpResponse::InternalServerError().finish(),
+    }
+}
+
+fn get_favorites(db: MutexGuard<'_, rusqlite::Connection>, user_id: String) -> Option<Vec<Favorite>> {
+    Some(
+        db.prepare("SELECT * FROM favorites WHERE user_id = :user_id").ok()?
+            .query_map(&[(":user_id", &user_id)], |row| Favorite::from_row(row))
+            .ok()?
+            .map(|fav| fav.unwrap())
+            .collect()
+    )
 }
 
 #[actix_web::main]
@@ -58,6 +80,7 @@ async fn main() -> std::io::Result<()> {
             }))
             .service(healthcheck)
             .service(authorized)
+            .service(favorites)
     })
     .bind(("0.0.0.0", port))?
     .run()

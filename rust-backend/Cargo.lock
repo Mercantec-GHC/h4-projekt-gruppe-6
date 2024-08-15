@@ -1135,6 +1135,7 @@ dependencies = [
  "hmac",
  "refinery",
  "rusqlite",
+ "serde",
  "serde_json",
  "sha2",
 ]
