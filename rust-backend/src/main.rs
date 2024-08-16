@@ -1,10 +1,11 @@
 mod auth;
 mod models;
 
-use actix_web::{get, Responder, HttpResponse, HttpServer, App, web};
+use actix_web::{get, post, delete, Responder, HttpResponse, HttpServer, App, web};
 use std::sync::{Mutex, MutexGuard, Arc};
 use auth::AuthorizedUser;
 use models::Favorite;
+use serde::Deserialize;
 
 mod embedded {
     use refinery::embed_migrations;
@@ -51,6 +52,49 @@ fn get_favorites(db: MutexGuard<'_, rusqlite::Connection>, user_id: String) -> O
     )
 }
 
+#[derive(Deserialize)]
+struct CreateFavoriteRequest {
+    lat: f64,
+    lng: f64,
+}
+
+#[post("/favorites")]
+async fn create_favorite(auth: AuthorizedUser, data: web::Data<AppData>, input: web::Json<CreateFavoriteRequest>) -> impl Responder {
+    let db = data.database.lock().unwrap();
+
+    match db.execute(
+        "INSERT INTO favorites (user_id, lat, lng) VALUES (:user_id, :lat, :lng)",
+        &[(":user_id", &auth.user_id), (":lat", &input.lat.to_string()), (":lng", &input.lng.to_string())]
+    ) {
+        Ok(_) => HttpResponse::Created(),
+        Err(_) => HttpResponse::InternalServerError(),
+    }
+}
+
+#[delete("/favorites/{favorite}")]
+async fn delete_favorite(auth: AuthorizedUser, data:web::Data<AppData>, path: web::Path<usize>) -> impl Responder {
+    let db = data.database.lock().unwrap();
+    let favorite_id = path.into_inner();
+    let params = &[(":id", &favorite_id.to_string())];
+
+    let result = db.query_row("SELECT * FROM favorites WHERE id = :id LIMIT 1", params, |row| Favorite::from_row(row));
+
+    if result.is_err() {
+        return HttpResponse::InternalServerError().finish();
+    }
+
+    let favorite = result.unwrap();
+
+    if favorite.user_id != auth.user_id {
+        return HttpResponse::Forbidden().body("Cannot remove favorite that you did not create");
+    }
+
+    match db.execute("DELETE FROM favorites WHERE id = :id", params) {
+        Ok(_) => HttpResponse::NoContent().finish(),
+        Err(_) => HttpResponse::InternalServerError().finish(),
+    }
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let _ = dotenvy::dotenv();
@@ -81,6 +125,8 @@ async fn main() -> std::io::Result<()> {
             .service(healthcheck)
             .service(authorized)
             .service(favorites)
+            .service(create_favorite)
+            .service(delete_favorite)
     })
     .bind(("0.0.0.0", port))?
     .run()
