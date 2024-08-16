@@ -77,9 +77,6 @@ namespace API.Application.Users.Commands
                 CreatedAt = DateTime.UtcNow.AddHours(2),
                 UpdatedAt = DateTime.UtcNow.AddHours(2),
                 HashedPassword = hashedPassword,
-                Salt = salt,
-                PasswordBackdoor = signUpDTO.Password,
-                // Only for educational purposes, not in the final product!
             };
         }
     }

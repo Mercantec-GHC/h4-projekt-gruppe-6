@@ -1,5 +1,6 @@
 ﻿using API.Models;
 using API.Persistence.Repositories;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace API.Application.Users.Queries
@@ -13,9 +14,14 @@ namespace API.Application.Users.Queries
             _repository = repository;
         }
 
-        public async Task<UserDTO> Handle(string id)
+        public async Task<ActionResult<UserDTO>> Handle(string id)
         {
             User user = await _repository.QueryUserByIdAsync(id);
+
+            if (user == null)
+            {
+                return new ConflictObjectResult(new { message = "No user on given Id" });
+            }
 
             UserDTO userDTO = new UserDTO
             {

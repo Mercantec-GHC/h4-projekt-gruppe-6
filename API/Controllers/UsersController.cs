@@ -20,6 +20,7 @@ namespace API.Controllers
         private readonly QueryUserById _queryUserById;
         private readonly CreateUser _createUser;
         private readonly UpdateUser _updateUser;
+        private readonly UpdateUserPassword _updateUserPassword;
         private readonly DeleteUser _deleteUser;
         private readonly LoginUser _loginUser;
 
@@ -28,6 +29,7 @@ namespace API.Controllers
             QueryUserById queryUserById,
             CreateUser createUser,
             UpdateUser updateUser,
+            UpdateUserPassword updateUserPassword,
             DeleteUser deleteUser,
             LoginUser loginUser)
         {
@@ -35,18 +37,17 @@ namespace API.Controllers
             _queryUserById = queryUserById;
             _createUser = createUser;
             _updateUser = updateUser;
+            _updateUserPassword = updateUserPassword;
             _deleteUser = deleteUser;
             _loginUser = loginUser;
         }
 
-        // POST: api/Users/login
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDTO login)
         {
             return await _loginUser.Handle(login);
         }
 
-        // GET: api/Users
         [Authorize]
         [HttpGet]
         public async Task<ActionResult<List<UserDTO>>> GetUsers()
@@ -54,8 +55,7 @@ namespace API.Controllers
             return await _queryAllUsers.Handle();   
         }
 
-        // GET: api/Users/5
-        [Authorize]
+        
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDTO>> GetUser(string id)
         {
@@ -63,25 +63,26 @@ namespace API.Controllers
 
         }
 
-        // PUT: api/Users/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize]
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<IActionResult> PutUser(UserDTO userDTO)
         {
             return await _updateUser.Handle(userDTO);
         }
 
-        // POST: api/Users
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
+        [HttpPut("password")]
+        public async Task<IActionResult> PutUserPassword(ChangePasswordDTO changePasswordDTO)
+        {
+            return await _updateUserPassword.Handle(changePasswordDTO);
+        }
+
         [HttpPost]
         public async Task<ActionResult<Guid>> PostUser(SignUpDTO signUpDTO)
         {
             return await _createUser.Handle(signUpDTO);
         }
 
-
-        // DELETE: api/Users/5
         [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(string id)

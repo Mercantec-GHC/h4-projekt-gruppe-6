@@ -21,7 +21,6 @@ namespace API.Persistence.Repositories
             }
             catch (Exception)
             {
-
                 return new User();
             }
 
@@ -44,6 +43,21 @@ namespace API.Persistence.Repositories
         }
 
         public async Task<bool> UpdateUserAsync(User user)
+        {
+            try
+            {
+                _context.Entry(user).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public async Task<bool> UpdateUserPasswordAsync(User user)
         {
             try
             {

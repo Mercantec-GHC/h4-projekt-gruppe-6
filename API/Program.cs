@@ -36,6 +36,7 @@ namespace API
             builder.Services.AddScoped<QueryUserById>();
             builder.Services.AddScoped<CreateUser>();
             builder.Services.AddScoped<UpdateUser>();
+            builder.Services.AddScoped<UpdateUserPassword>();
             builder.Services.AddScoped<DeleteUser>();
             builder.Services.AddScoped<LoginUser>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();

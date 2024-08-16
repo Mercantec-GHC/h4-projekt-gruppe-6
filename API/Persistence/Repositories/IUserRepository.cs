@@ -10,5 +10,6 @@ namespace API.Persistence.Repositories
         Task<User> QueryUserByIdAsync(string id);
         Task<User> QueryUserByEmailAsync(string email);
         Task<bool> UpdateUserAsync(User user);
+        Task<bool> UpdateUserPasswordAsync(User user);
     }
 }

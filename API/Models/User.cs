@@ -8,8 +8,6 @@ public class User : BaseModel
     public string? Username { get; set; }
     public string? Password { get; set; }
     public string HashedPassword { get; set; }
-    public string PasswordBackdoor { get; set; }
-    public string Salt { get; set; }
 }
 
 public class UserDTO
@@ -30,5 +28,12 @@ public class SignUpDTO
     public string Email { get; set; }
     public string Username { get; set; }
     public string Password { get; set; }
-
 }
+
+public class ChangePasswordDTO
+{
+    public string Id { get; set; }
+    public string OldPassword { get; set; }
+    public string NewPassword { get; set; }
+}
+
