@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'register.dart';
+import 'login.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key, required this.title});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,18 +24,21 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             children: [
               const SizedBox(height: 80),
+              const Text('Brugernavn'),
+              const TextField(),
+              const SizedBox(height: 30),
               const Text('Email'),
               const TextField(),
               const SizedBox(height: 30),
               const Text('Password'),
               const TextField(obscureText: true, enableSuggestions: false, autocorrect: false),
               const SizedBox(height: 30),
-              ElevatedButton(child: const Text('Log ind'), onPressed: () => Navigator.pop(context)),
+              ElevatedButton(child: const Text('Registrer'), onPressed: () => Navigator.pop(context)),
               const SizedBox(height: 10),
               TextButton(
-                child: const Text('Registrer konto'),
-                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterPage(title: 'Registrer'))),
-              )
+                child: const Text('Log ind'),
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage(title: 'Log ind')))
+              ),
             ]
           )
         )
