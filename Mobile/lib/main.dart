@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'weather.dart';
+import 'package:flutter_map/flutter_map.dart';
+import "package:latlong2/latlong.dart";
 
 void main() {
   runApp(const MyApp());
@@ -69,13 +70,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _navigateToWeatherForecastPage() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => WeatherForecastPage()),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,19 +77,14 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have clicked the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
+      body: FlutterMap(
+        options: const MapOptions(initialCenter: LatLng(55.9397, 9.5156), initialZoom: 7.0),
+        children: [
+          TileLayer(
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+          )
+        ],
       ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -104,12 +93,6 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: _incrementCounter,
             tooltip: 'Increment',
             child: const Icon(Icons.add),
-          ),
-          SizedBox(width: 10), // Optional: Adds space between buttons
-          FloatingActionButton(
-            onPressed: _navigateToWeatherForecastPage,
-            tooltip: 'Show Weather',
-            child: const Icon(Icons.star),
           ),
         ],
       ),
