@@ -5,9 +5,7 @@ import 'register.dart';
 import 'api.dart' as api;
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key, required this.title});
-
-  final String title;
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -42,31 +40,27 @@ class _LoginPageState extends State<LoginPage> {
       body: Scaffold(
         body: Center(
           child: Container(
-            constraints:
-                const BoxConstraints(minWidth: 100, maxWidth: 400),
+            constraints: const BoxConstraints(minWidth: 100, maxWidth: 400),
             child: Column(children: [
               const SizedBox(height: 80),
               const Text('Email'),
               TextField(controller: emailInput),
               const SizedBox(height: 30),
               const Text('Password'),
-                      TextField(
-                          controller: passwordInput,
-                          obscureText: true,
-                          enableSuggestions: false,
-                          autocorrect: false),
+              TextField(
+                  controller: passwordInput,
+                  obscureText: true,
+                  enableSuggestions: false,
+                  autocorrect: false),
               const SizedBox(height: 30),
               ElevatedButton(onPressed: _login, child: const Text('Login')),
               const SizedBox(height: 10),
               TextButton(
-                child: const Text('Register account'),
-                onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const RegisterPage(title: 'Register')))),
-              ElevatedButton(onPressed: _login, child: const Text('Log ind')),
-              const SizedBox(height: 10),
-              TextButton(
-                child: const Text('Registrer konto'),
-                onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const RegisterPage(title: 'Registrer'))),
-              ),
+                  child: const Text('Register account'),
+                  onPressed: () => Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const RegisterPage()))),
             ]),
           ),
         ),
