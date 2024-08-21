@@ -1,5 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'register.dart';
+import 'api.dart' as api;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, required this.title});
@@ -11,6 +15,26 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final emailInput = TextEditingController();
+  final passwordInput = TextEditingController();
+
+  Future<void> _login() async {
+    final token = await api.request(context, api.ApiService.auth, 'POST', '/api/Users/login', {
+      'email': emailInput.text,
+      'password': passwordInput.text,
+    });
+
+    if (token == null) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('token', token);
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Successfully logged in')));
+      Navigator.pop(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,21 +49,28 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               const SizedBox(height: 80),
               const Text('Email'),
-              const TextField(),
+              TextField(controller: emailInput),
               const SizedBox(height: 30),
               const Text('Password'),
-              const TextField(obscureText: true, enableSuggestions: false, autocorrect: false),
+              TextField(controller: passwordInput, obscureText: true, enableSuggestions: false, autocorrect: false),
               const SizedBox(height: 30),
-              ElevatedButton(child: const Text('Log ind'), onPressed: () => Navigator.pop(context)),
+              ElevatedButton(onPressed: _login, child: const Text('Log ind')),
               const SizedBox(height: 10),
               TextButton(
                 child: const Text('Registrer konto'),
-                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterPage(title: 'Registrer'))),
+                onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const RegisterPage(title: 'Registrer'))),
               )
             ]
           )
         )
       )
     );
+  }
+
+  @override
+  void dispose() {
+    emailInput.dispose();
+    passwordInput.dispose();
+    super.dispose();
   }
 }

@@ -37,7 +37,7 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(height: 10),
               TextButton(
                 child: const Text('Log ind'),
-                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage(title: 'Log ind')))
+                onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginPage(title: 'Log ind')))
               ),
             ]
           )
