@@ -52,11 +52,11 @@ class _LoginPageState extends State<LoginPage> {
               const Text('Password'),
               TextField(controller: passwordInput, obscureText: true, enableSuggestions: false, autocorrect: false),
               const SizedBox(height: 30),
-              ElevatedButton(onPressed: _login, child: const Text('Log ind')),
+              ElevatedButton(onPressed: _login, child: const Text('Login')),
               const SizedBox(height: 10),
               TextButton(
-                child: const Text('Registrer konto'),
-                onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const RegisterPage(title: 'Registrer'))),
+                child: const Text('Register account'),
+                onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const RegisterPage(title: 'Register'))),
               )
             ]
           )

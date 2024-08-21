@@ -44,7 +44,7 @@ class _RegisterPageState extends State<RegisterPage> {
           child: Column(
             children: [
               const SizedBox(height: 80),
-              const Text('Brugernavn'),
+              const Text('Username'),
               TextField(controller: usernameInput),
               const SizedBox(height: 30),
               const Text('Email'),
@@ -53,11 +53,11 @@ class _RegisterPageState extends State<RegisterPage> {
               const Text('Password'),
               TextField(controller: passwordInput, obscureText: true, enableSuggestions: false, autocorrect: false),
               const SizedBox(height: 30),
-              ElevatedButton(onPressed: _register, child: const Text('Registrer')),
+              ElevatedButton(onPressed: _register, child: const Text('Register')),
               const SizedBox(height: 10),
               TextButton(
-                child: const Text('Log ind'),
-                onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginPage(title: 'Log ind')))
+                child: const Text('Login'),
+                onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginPage(title: 'Login')))
               ),
             ]
           )
