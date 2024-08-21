@@ -66,7 +66,7 @@ KC - Kundechef
 
 ## Torsdag
 
-**PO(Alexander):**
+**PO(Alexander):** Manglende pga. sygdom
 
 **KC(Reimar):**
 
@@ -74,9 +74,45 @@ KC - Kundechef
 
 ## Fredag
 
-**PO(Alexander):**
+**PO(Alexander):** Manglende pga. kommunemøde
 
 **KC(Reimar):**
 
 **SM(Philip):**
 
+# Uge 34
+
+## Mandag
+**KC(Alexander):** Mødte op, lavede hurlumhaj, lærte om Flutter. Geninstallerede min laptop fordi Windows var træls. Fik sat alle værktøjerne op på Linux Mint
+**SM(Reimar):**
+**PO(Philip):**
+
+
+## Tirsdag
+
+**KC(Alexander):** Ramt af sygdom, fucking tirsdage
+
+**SM(Reimar):**
+
+**PO(Philip):**
+## Onsdag
+
+**KC(Alexander):** Mødte lidt sent, kiggede Reimar's kode igennem, pointerede et issue med email-validation (kan nok løses med lidt Regex)
+
+**SM(Reimar):**
+
+**PO(Philip):**
+## Torsdag
+
+**KC(Alexander):**
+
+**SM(Reimar):**
+
+**PO(Philip):**
+## Fredag
+
+**KC(Alexander):**
+
+**SM(Reimar):**
+
+**PO(Philip):**
