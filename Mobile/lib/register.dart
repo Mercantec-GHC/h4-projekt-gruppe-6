@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/base/sidemenu.dart';
 import 'login.dart';
 import 'api.dart' as api;
 
@@ -17,7 +18,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final passwordInput = TextEditingController();
 
   Future<void> _register() async {
-    final result = await api.request(context, api.ApiService.auth, 'POST', '/api/Users', {
+    final result =
+        await api.request(context, api.ApiService.auth, 'POST', '/api/Users', {
       'username': usernameInput.text,
       'email': emailInput.text,
       'password': passwordInput.text,
@@ -26,44 +28,49 @@ class _RegisterPageState extends State<RegisterPage> {
     if (result == null) return;
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Successfully registered, please login')));
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginPage(title: 'Log ind')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Successfully registered, please login')));
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const LoginPage(title: 'Log ind')));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Container(
-          constraints: const BoxConstraints(minWidth: 100, maxWidth: 400),
-          child: Column(
-            children: [
-              const SizedBox(height: 80),
-              const Text('Brugernavn'),
-              TextField(controller: usernameInput),
-              const SizedBox(height: 30),
-              const Text('Email'),
-              TextField(controller: emailInput),
-              const SizedBox(height: 30),
-              const Text('Password'),
-              TextField(controller: passwordInput, obscureText: true, enableSuggestions: false, autocorrect: false),
-              const SizedBox(height: 30),
-              ElevatedButton(onPressed: _register, child: const Text('Registrer')),
-              const SizedBox(height: 10),
-              TextButton(
-                child: const Text('Log ind'),
-                onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginPage(title: 'Log ind')))
-              ),
-            ]
-          )
-        )
-      )
-    );
+    return SideMenu(
+        body: Scaffold(
+            body: Center(
+                child: Container(
+                    constraints:
+                        const BoxConstraints(minWidth: 100, maxWidth: 400),
+                    child: Column(children: [
+                      const SizedBox(height: 80),
+                      const Text('Brugernavn'),
+                      TextField(controller: usernameInput),
+                      const SizedBox(height: 30),
+                      const Text('Email'),
+                      TextField(controller: emailInput),
+                      const SizedBox(height: 30),
+                      const Text('Password'),
+                      TextField(
+                          controller: passwordInput,
+                          obscureText: true,
+                          enableSuggestions: false,
+                          autocorrect: false),
+                      const SizedBox(height: 30),
+                      ElevatedButton(
+                          onPressed: _register, child: const Text('Registrer')),
+                      const SizedBox(height: 10),
+                      TextButton(
+                          child: const Text('Log ind'),
+                          onPressed: () => Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const LoginPage(title: 'Log ind')))),
+                    ])))));
   }
 
   @override
