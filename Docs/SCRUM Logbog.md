@@ -68,7 +68,7 @@ KC - Kundechef
 
 **PO(Alexander):** Manglende pga. sygdom
 
-**KC(Reimar):**
+**KC(Reimar):** Implementeret JWT verifikation i rust-backenden
 
 **SM(Philip):** Var med til et møde sammen med reimer da programmeringsgruppen skulle bruge hjælp. Tilføjede selv authorization på swagger appikationen
 
@@ -76,32 +76,36 @@ KC - Kundechef
 
 **PO(Alexander):** Manglende pga. kommunemøde
 
-**KC(Reimar):**
+**KC(Reimar):** Lavet model og routes til oprettelse/sletning af favoritter i rust
 
 **SM(Philip):**
 
 # Uge 34
 
 ## Mandag
-**KC(Alexander):** Mødte op, lavede hurlumhaj, lærte om Flutter. Geninstallerede min laptop fordi Windows var træls. Fik sat alle værktøjerne op på Linux Mint
-**SM(Reimar):**
-**PO(Philip):**
 
+**KC(Alexander):** Mødte op, lavede hurlumhaj, lærte om Flutter. Geninstallerede min laptop fordi Windows var træls. Fik sat alle værktøjerne op på Linux Mint
+
+**SM(Reimar):** Kørte gennem flutter-tutorial
+
+**PO(Philip):**
 
 ## Tirsdag
 
 **KC(Alexander):** Ramt af sygdom, fucking tirsdage
 
-**SM(Reimar):**
+**SM(Reimar):** Tilføjet kort samt login/register-side til vores flutter app
 
 **PO(Philip):**
+
 ## Onsdag
 
 **KC(Alexander):** Mødte lidt sent, kiggede Reimar's kode igennem, pointerede et issue med email-validation (kan nok løses med lidt Regex)
 
-**SM(Reimar):**
+**SM(Reimar):** Koblet flutter app sammen med vorese backend API til login/signup
 
 **PO(Philip):**
+
 ## Torsdag
 
 **KC(Alexander):**
@@ -109,6 +113,7 @@ KC - Kundechef
 **SM(Reimar):**
 
 **PO(Philip):**
+
 ## Fredag
 
 **KC(Alexander):**
@@ -116,3 +121,4 @@ KC - Kundechef
 **SM(Reimar):**
 
 **PO(Philip):**
+
