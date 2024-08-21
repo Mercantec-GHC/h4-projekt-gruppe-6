@@ -1,0 +1,4 @@
+{
+  "AUTH_SERVICE_HOST": "http://localhost:5287",
+  "APP_SERVICE_HOST": "http://localhost:8080"
+}
