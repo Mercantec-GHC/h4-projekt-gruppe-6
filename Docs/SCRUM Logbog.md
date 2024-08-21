@@ -1,11 +1,11 @@
 |            | Scrum Master | Product Owner | Kundechef |
 | ---------- | ------------ | ------------- | --------- |
-| **Uge 32** | Alexander    | Reimar        | Phillip   |
-| **Uge 33** | Phillip      | Alexander     | Reimar    |
-| **Uge 34** | Reimar       | Phillip       | Alexander |
-| **Uge 35** | Alexander    | Reimar        | Phillip   |
-| **Uge 36** | Phillip      | Alexander     | Reimar    |
-| **Uge 37** | Reimar       | Phillip       | Alexander |
+| **Uge 32** | Alexander    | Reimar        | Philip    |
+| **Uge 33** | Philip       | Alexander     | Reimar    |
+| **Uge 34** | Reimar       | Philip        | Alexander |
+| **Uge 35** | Alexander    | Reimar        | Philip    |
+| **Uge 36** | Philip       | Alexander     | Reimar    |
+| **Uge 37** | Reimar       | Philip        | Alexander |
 
 # Daglig Logbog Uge 32
 
@@ -78,7 +78,7 @@ KC - Kundechef
 
 **KC(Reimar):** Lavet model og routes til oprettelse/sletning af favoritter i rust
 
-**SM(Philip):**
+**SM(Philip):** 
 
 # Uge 34
 
@@ -88,7 +88,7 @@ KC - Kundechef
 
 **SM(Reimar):** Kørte gennem flutter-tutorial
 
-**PO(Philip):**
+**PO(Philip):** Flutter tutorial
 
 ## Tirsdag
 
@@ -96,7 +96,7 @@ KC - Kundechef
 
 **SM(Reimar):** Tilføjet kort samt login/register-side til vores flutter app
 
-**PO(Philip):**
+**PO(Philip):** start på menu som kunderne bad om
 
 ## Onsdag
 
@@ -104,7 +104,7 @@ KC - Kundechef
 
 **SM(Reimar):** Koblet flutter app sammen med vorese backend API til login/signup
 
-**PO(Philip):**
+**PO(Philip):** færdig med side-menu som funger på alle sider.
 
 ## Torsdag
 
