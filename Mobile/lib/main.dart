@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:mobile/favourites.dart';
+import 'package:mobile/favorites.dart';
 import 'package:mobile/register.dart';
 import 'login.dart';
 import 'base/sidemenu.dart';
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/home': (context) => const MyHomePage(),
         '/profile': (context) => const ProfilePage(),
-        '/favourites': (context) => const FavouritesPage(),
+        '/favorites': (context) => const FavoritesPage(),
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
       },
@@ -59,7 +59,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
       final response = await api.request(context, api.ApiService.app, 'GET', '/favorites', null);
       if (response == null) return;
-      log(response);
 
       final List<dynamic> favorites = jsonDecode(response);
       setState(() {

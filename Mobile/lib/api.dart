@@ -83,6 +83,7 @@ Future<bool> isLoggedIn(BuildContext context) async {
   } catch (e) {
     messenger.showSnackBar(const SnackBar(content: Text('Invalid token, please sign in again')));
     prefs.remove('token');
+    debugPrint(e.toString());
     return false;
   }
 
