@@ -10,17 +10,22 @@ enum ApiService {
 
 Future<String?> request(BuildContext context, ApiService service, String method, String path, Object? body) async {
   final messenger = ScaffoldMessenger.of(context);
+  final prefs = await SharedPreferences.getInstance();
 
   final host = switch (service) {
     ApiService.auth => const String.fromEnvironment('AUTH_SERVICE_HOST'),
     ApiService.app => const String.fromEnvironment('APP_SERVICE_HOST'),
   };
 
+  final token = prefs.getString('token');
+  final Map<String, String> headers = {};
+  if (token != null) headers.addAll({'Authorization': 'Bearer $token'});
+
   final http.Response response;
 
   try {
     if (method == 'GET') {
-      response = await http.get(Uri.parse(host + path));
+      response = await http.get(Uri.parse(host + path), headers: headers);
     } else {
       final function = switch (method) {
         'POST' => http.post,
@@ -29,9 +34,11 @@ Future<String?> request(BuildContext context, ApiService service, String method,
         _ => throw const FormatException('Invalid method'),
       };
 
+      headers.addAll({'Content-Type': 'application/json'});
+
       response = await function(
         Uri.parse(host + path),
-        headers: {'Content-Type': 'application/json'},
+        headers: headers,
         body: body != null ? jsonEncode(body) : null,
       );
     }
