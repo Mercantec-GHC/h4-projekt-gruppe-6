@@ -15,8 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   final passwordInput = TextEditingController();
 
   Future<void> _login() async {
-    final token = await api
-        .request(context, api.ApiService.auth, 'POST', '/api/Users/login', {
+    final token = await api.request(context, api.ApiService.auth, 'POST', '/api/Users/login', {
       'email': emailInput.text,
       'password': passwordInput.text,
     });
@@ -27,8 +26,7 @@ class _LoginPageState extends State<LoginPage> {
     prefs.setString('token', token);
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Successfully logged in')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Successfully logged in')));
       Navigator.pushReplacementNamed(context, '/home');
     }
   }
@@ -47,17 +45,18 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 30),
               const Text('Password'),
               TextField(
-                  controller: passwordInput,
-                  obscureText: true,
-                  enableSuggestions: false,
-                  autocorrect: false),
+                controller: passwordInput,
+                obscureText: true,
+                enableSuggestions: false,
+                autocorrect: false,
+              ),
               const SizedBox(height: 30),
               ElevatedButton(onPressed: _login, child: const Text('Login')),
               const SizedBox(height: 10),
               TextButton(
-                  child: const Text('Register account'),
-                  onPressed: () =>
-                      Navigator.pushReplacementNamed(context, '/register')),
+                child: const Text('Register account'),
+                onPressed: () => Navigator.pushReplacementNamed(context, '/register')
+              ),
             ]),
           ),
         ),
