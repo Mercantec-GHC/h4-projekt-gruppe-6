@@ -76,23 +76,24 @@ class _MyHomePageState extends State<MyHomePage> {
         key: _scaffoldKey,
         //drawer: navigationMenu,
         body: FlutterMap(
-          options: const MapOptions(
-              initialCenter: LatLng(55.9397, 9.5156), initialZoom: 7.0),
+          options: const MapOptions(initialCenter: LatLng(55.9397, 9.5156), initialZoom: 7.0),
           children: [
             openStreetMapTileLayer,
-            const MarkerLayer(markers: [
-              Marker(
-                point: LatLng(56.465511, 9.411366),
-                width: 60,
-                height: 100,
-                alignment: Alignment.center,
-                child: Icon(
-                  Icons.location_pin,
-                  size: 60,
-                  color: Colors.purple,
-                ),
-              ),
-            ]),
+            ..._favorites.map((favorite) =>
+              MarkerLayer(markers: [
+                Marker(
+                  point: LatLng(favorite.lat, favorite.lng),
+                  width: 60,
+                  height: 100,
+                  alignment: Alignment.center,
+                  child: const Icon(
+                    Icons.location_pin,
+                    size: 60,
+                    color: Colors.yellow,
+                  )
+                )
+              ])
+            ),
           ],
         ),
       ),
