@@ -35,9 +35,25 @@ class _FavoritesPage extends State<FavoritesPage> {
   Widget build(BuildContext context) {
     return SideMenu(
       body: Container(
+        decoration: BoxDecoration(color: Color(0xFFF9F9F9)),
+        width: MediaQuery.of(context).size.width,
         padding: const EdgeInsets.all(20.0),
         child: Column(children:
-          _favorites.map((favorite) => Text("${favorite.lat} ${favorite.lng}")).toList(),
+          _favorites.map((favorite) => Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20.0),
+            decoration: const BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0x20000000),
+                  offset: Offset(0, 1),
+                  blurRadius: 4,
+                ),
+              ],
+              color: Colors.white
+            ),
+            child: const Text("Favorite data here"),
+          )).toList(),
         ),
       ),
     );
