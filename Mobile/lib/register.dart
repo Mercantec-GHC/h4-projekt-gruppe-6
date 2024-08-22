@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/base/sidemenu.dart';
-import 'login.dart';
 import 'api.dart' as api;
 
 class RegisterPage extends StatefulWidget {
@@ -28,8 +27,7 @@ class _RegisterPageState extends State<RegisterPage> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Successfully registered, please login')));
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const LoginPage()));
+      Navigator.pushReplacementNamed(context, '/login');
     }
   }
 
@@ -60,10 +58,7 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(height: 10),
               TextButton(
                   child: const Text('Login'),
-                  onPressed: () => Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const LoginPage()))),
+                  onPressed: () => Navigator.pushReplacementNamed(context, '/login')),
             ]),
           ),
         ),

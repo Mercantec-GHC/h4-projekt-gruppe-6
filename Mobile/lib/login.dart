@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/base/sidemenu.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'register.dart';
 import 'api.dart' as api;
 
 class LoginPage extends StatefulWidget {
@@ -30,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Successfully logged in')));
-      Navigator.pop(context);
+      Navigator.pushReplacementNamed(context, '/home');
     }
   }
 
@@ -57,10 +56,8 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 10),
               TextButton(
                   child: const Text('Register account'),
-                  onPressed: () => Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const RegisterPage()))),
+                  onPressed: () =>
+                      Navigator.pushReplacementNamed(context, '/register')),
             ]),
           ),
         ),
