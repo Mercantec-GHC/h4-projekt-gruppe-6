@@ -13,10 +13,15 @@ class _RegisterPageState extends State<RegisterPage> {
   final usernameInput = TextEditingController();
   final emailInput = TextEditingController();
   final passwordInput = TextEditingController();
+  final confirmPasswordInput = TextEditingController();
 
   Future<void> _register() async {
-    final result =
-        await api.request(context, api.ApiService.auth, 'POST', '/api/Users', {
+    if (passwordInput.text != confirmPasswordInput.text) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Passwords do not match')));
+      return;
+    }
+
+    final result = await api.request(context, api.ApiService.auth, 'POST', '/api/Users', {
       'username': usernameInput.text,
       'email': emailInput.text,
       'password': passwordInput.text,
@@ -25,8 +30,7 @@ class _RegisterPageState extends State<RegisterPage> {
     if (result == null) return;
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Successfully registered, please login')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Successfully registered, please login')));
       Navigator.pushReplacementNamed(context, '/login');
     }
   }
@@ -48,11 +52,21 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(height: 30),
               const Text('Password'),
               TextField(
-                  controller: passwordInput,
-                  obscureText: true,
-                  enableSuggestions: false,
-                  autocorrect: false),
+                controller: passwordInput,
+                obscureText: true,
+                enableSuggestions: false,
+                autocorrect: false
+              ),
               const SizedBox(height: 30),
+              const Text('Confirm Password'),
+              TextField(
+                controller: confirmPasswordInput,
+                obscureText: true,
+                enableSuggestions: false,
+                autocorrect: false,
+              ),
+              const SizedBox(height: 30),
+
               ElevatedButton(
                   onPressed: _register, child: const Text('Register')),
               const SizedBox(height: 10),
@@ -71,6 +85,7 @@ class _RegisterPageState extends State<RegisterPage> {
     usernameInput.dispose();
     emailInput.dispose();
     passwordInput.dispose();
+    confirmPasswordInput.dispose();
     super.dispose();
   }
 }
