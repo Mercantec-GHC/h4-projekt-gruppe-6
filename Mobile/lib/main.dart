@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -6,6 +9,8 @@ import 'package:mobile/register.dart';
 import 'login.dart';
 import 'base/sidemenu.dart';
 import 'profile.dart';
+import 'api.dart' as api;
+import 'models.dart';
 
 void main() {
   runApp(const MyApp());
@@ -43,6 +48,27 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  List<Favorite> _favorites = [];
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    api.isLoggedIn(context).then((isLoggedIn) async {
+      if (!isLoggedIn || !mounted) return;
+
+      final response = await api.request(context, api.ApiService.app, 'GET', '/favorites', null);
+      if (response == null) return;
+      log(response);
+
+      final List<dynamic> favorites = jsonDecode(response);
+      setState(() {
+        _favorites = favorites.map((favorite) => Favorite(favorite['id'], favorite['user_id'], favorite['lat'], favorite['lng'])).toList();
+      });
+    });
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return SideMenu(

@@ -17,10 +17,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Future<void> _register() async {
     if (passwordInput.text != confirmPasswordInput.text) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Passwords do not match')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Passwords do not match')));
       return;
     }
-
     final result = await api.request(context, api.ApiService.auth, 'POST', '/api/Users', {
       'username': usernameInput.text,
       'email': emailInput.text,
