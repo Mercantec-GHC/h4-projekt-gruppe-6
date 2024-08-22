@@ -7,6 +7,7 @@ class FavouritesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const SideMenu(
+      selectedIndex: 1,
       body: Center(
         child: Text('This is Page 1'),
       ),

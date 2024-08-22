@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'dart:developer';
 
 enum ApiService {
   auth,
@@ -11,16 +10,12 @@ enum ApiService {
 
 Future<String?> request(BuildContext context, ApiService service, String method,
     String path, Object? body) async {
-  log('hello');
   final messenger = ScaffoldMessenger.of(context);
 
   final host = switch (service) {
     ApiService.auth => const String.fromEnvironment('AUTH_SERVICE_HOST'),
     ApiService.app => const String.fromEnvironment('APP_SERVICE_HOST'),
   };
-
-  log('hello');
-  log(const String.fromEnvironment('AUTH_SERVICE_HOST'));
 
   final http.Response response;
 

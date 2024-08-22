@@ -46,6 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return SideMenu(
+      selectedIndex: 0,
       body: Scaffold(
         key: _scaffoldKey,
         //drawer: navigationMenu,
