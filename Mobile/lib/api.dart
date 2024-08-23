@@ -13,7 +13,7 @@ enum ApiService {
 
 Future<String?> request(BuildContext context, ApiService service, String method,
     String path, Object? body) async {
-  final messenger = ScaffoldMessenger.of(context);
+    final messenger = ScaffoldMessenger.of(context);
 
   final host = switch (service) {
     ApiService.auth => const String.fromEnvironment('AUTH_SERVICE_HOST'),

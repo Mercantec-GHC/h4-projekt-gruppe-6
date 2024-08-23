@@ -29,17 +29,14 @@ class _LoginPageState extends State<LoginPage> {
 
   // Assuming token is a JSON string
   Map<String, dynamic> json = jsonDecode(token);
-  User jsonUser = User.fromJson(json);
+  Login jsonUser = Login.fromJson(json);
 
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('token', jsonUser.token);
     prefs.setString('id', jsonUser.id);
-  
-    
+ 
     setState(()
-    {user = jsonUser;
-    loggedIn == true;
-    });
+    {loggedIn == true;});
     
 
     if (mounted) {

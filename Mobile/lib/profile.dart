@@ -1,45 +1,63 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:mobile/base/variables.dart';
 import 'package:mobile/models.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'base/sidemenu.dart';
-import 'package:mobile/base/variables.dart';
-
-
-
+import 'api.dart' as api;
 
 class ProfilePage extends StatefulWidget {
-
   const ProfilePage({super.key});
-  //const ProfilePage({super.key, required this.id});
-
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-    late User userData;
+  User? userData;
 
   @override
-    void initState() {
+  void initState() {
     super.initState();
-
-    // Check if the user is logged in when the page is entered
-    if (loggedIn == false) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Please log in')));
-        Navigator.pushReplacementNamed(context, '/login');
-      });
-    }
-    
-    setState(() {
-      userData = user!;
-    });
+    getProfile();
   }
 
+  Future<void> getProfile() async {
+    if (!loggedIn) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please log in')),
+        );
+        Navigator.pushReplacementNamed(context, '/login');
+      });
+      return;
+    }
 
-   
+    if (user != null) {
+      setState(() {
+        userData = user!;
+      });
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString('id');
+
+      if (id != null) {
+        final response = await api
+            .request(context, api.ApiService.auth, 'GET', '/api/users/$id', null);
+
+        if (response == null) return;
+
+        Map<String, dynamic> json = jsonDecode(response);
+        User jsonUser = User.fromJson(json);
+
+        setState(() {
+          userData = jsonUser;
+          user = jsonUser;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,33 +76,41 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.account_circle,
-                  size: 100,
-                  color: Colors.grey,
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Username',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  'email@example.com',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
-                ),
-                const SizedBox(height: 50),
-                ElevatedButton(
-                  onPressed: () {
-                    // Add your edit action here
-                  },
-                  child: const Text('Edit'),
-                ),
-              ],
-            ),
+            child: userData == null
+                ? const CircularProgressIndicator()
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.account_circle,
+                        size: 100,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        userData!.username,
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        userData!.email,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 50),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Add your edit action here
+                        },
+                        child: const Text('Edit'),
+                      ),
+                    ],
+                  ),
           ),
         ],
       ),
