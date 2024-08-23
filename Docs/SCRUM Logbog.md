@@ -108,7 +108,7 @@ KC - Kundechef
 
 ## Torsdag
 
-**KC(Alexander):**
+**KC(Alexander):** Blev tæsket igennem VIM og arbejdede med Reimar på Favorites-featuren, inklusiv Rust server og database migration
 
 **SM(Reimar):**
 
@@ -116,7 +116,7 @@ KC - Kundechef
 
 ## Fredag
 
-**KC(Alexander):**
+**KC(Alexander):** Havde kundemøde med vores udviklergruppe - De regner med at starte på core-mechanics på spillet i næste uge. 
 
 **SM(Reimar):**
 
