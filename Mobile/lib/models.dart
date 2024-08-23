@@ -7,9 +7,23 @@ class Favorite {
   Favorite(this.id, this.userId, this.lat, this.lng);
 }
 
-class Login {
-  String id;
+class User {
   String token;
+  String id;
+  String email;
+  String username;
+  DateTime createdAt;
 
-  Login(this.id, this.token);
+  User(this.token, this.id, this.email, this.username, this.createdAt);
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      json['token'],
+      json['id'],
+      json['email'],
+      json['username'],
+      DateTime.parse(json['createdAt']),
+    );
+  }
 }
+

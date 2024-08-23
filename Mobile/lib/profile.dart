@@ -1,43 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/base/variables.dart';
+import 'package:mobile/models.dart';
 import 'base/sidemenu.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'api.dart' as api;
+import 'package:mobile/base/variables.dart';
+
+
 
 
 class ProfilePage extends StatefulWidget {
-  final String id;
 
-  const ProfilePage({super.key, required this.id});
+  const ProfilePage({super.key});
+  //const ProfilePage({super.key, required this.id});
+
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late String _id;
+    late User userData;
 
- @override
-  void initState() {
+  @override
+    void initState() {
     super.initState();
-    _id = widget.id; // Initialize _selectedIndex with the value from the widget
-  }
 
-Future<void> _getUser() async {
-    final token = await api
-        .request(context, api.ApiService.auth, 'GET', '/api/Users/$_id', {
-    });
-
-    if (token == null) return;
-
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('token', token);
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Successfully logged in')));
-      Navigator.pushReplacementNamed(context, '/home');
+    // Check if the user is logged in when the page is entered
+    if (loggedIn == false) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please log in')));
+        Navigator.pushReplacementNamed(context, '/login');
+      });
     }
+    
+    setState(() {
+      userData = user!;
+    });
   }
+
+
+   
 
   @override
   Widget build(BuildContext context) {

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/base/sidemenu.dart';
+import 'package:mobile/base/variables.dart';
+import 'package:mobile/models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:convert';
 import 'api.dart' as api;
 
 class LoginPage extends StatefulWidget {
@@ -16,16 +19,28 @@ class _LoginPageState extends State<LoginPage> {
   final passwordInput = TextEditingController();
 
   Future<void> _login() async {
-    final token = await api
-        .request(context, api.ApiService.auth, 'POST', '/api/Users/login', {
-      'email': emailInput.text,
-      'password': passwordInput.text,
-    });
+  final token = await api
+      .request(context, api.ApiService.auth, 'POST', '/api/Users/login', {
+    'email': emailInput.text,
+    'password': passwordInput.text,
+  });
 
-    if (token == null) return;
+  if (token == null) return;
+
+  // Assuming token is a JSON string
+  Map<String, dynamic> json = jsonDecode(token);
+  User jsonUser = User.fromJson(json);
 
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString('token', token);
+    prefs.setString('token', jsonUser.token);
+    prefs.setString('id', jsonUser.id);
+  
+    
+    setState(()
+    {user = jsonUser;
+    loggedIn == true;
+    });
+    
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile/api.dart' as api;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'variables.dart';
 
 
 class SideMenu extends StatefulWidget {
@@ -15,7 +16,6 @@ class SideMenu extends StatefulWidget {
 }
 
 class _SideMenuState extends State<SideMenu> {
-  bool _isLoggedIn = false;
   late int _selectedIndex;
 
  @override
@@ -28,7 +28,10 @@ class _SideMenuState extends State<SideMenu> {
     final prefs = await SharedPreferences.getInstance();
 
     prefs.remove('token');
-    setState(() => _isLoggedIn = false);
+    setState(() {
+      loggedIn = false;
+      });
+
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -43,8 +46,12 @@ class _SideMenuState extends State<SideMenu> {
     super.didChangeDependencies();
 
     api
-        .isLoggedIn(context)
-        .then((value) => setState(() => _isLoggedIn = value));
+       .isLoggedIn(context).then((value) {
+        setState(() {
+          loggedIn = value; // Update the second variable here
+  });
+});
+
   }
 
   @override
@@ -114,7 +121,7 @@ Widget build(BuildContext context) {
             thickness: 2,
             indent: 40,
           ),
-          ...(_isLoggedIn
+          ...(loggedIn
               ? [
                   ListTile(
                     title: const Text('Log out'),
