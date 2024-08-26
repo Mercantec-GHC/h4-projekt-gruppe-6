@@ -37,7 +37,7 @@ async fn favorites(auth: AuthorizedUser, data: web::Data<AppData>) -> impl Respo
     let db = data.database.lock().unwrap();
 
     match get_favorites(db, auth.user_id) {
-        Some(favorites) => HttpResponse::Ok().json(favorites),
+        Some(favorites) => HttpResponse::Ok().insert_header(("Content-Type", "application/json; charset=utf-8")).json(favorites),
         None => HttpResponse::InternalServerError().finish(),
     }
 }
@@ -69,7 +69,7 @@ async fn create_favorite(auth: AuthorizedUser, data: web::Data<AppData>, input: 
     let db = data.database.lock().unwrap();
 
     let Ok(response) = reqwest::Client::new()
-        .get("https://nominatim.openstreetmap.org/reverse.php?lat=54.951489&lon=9.703438&zoom=18&format=jsonv2")
+        .get(format!("https://nominatim.openstreetmap.org/reverse.php?lat={}&lon={}&zoom=18&format=jsonv2", input.lat, input.lng))
         .header("User-Agent", "SkanTravels/1.0")
         .send().await
         else { return HttpResponse::InternalServerError(); };
@@ -83,8 +83,8 @@ async fn create_favorite(auth: AuthorizedUser, data: web::Data<AppData>, input: 
             (":user_id", &auth.user_id),
             (":lat", &input.lat.to_string()),
             (":lng", &input.lng.to_string()),
-            (":name", &response.display_name),
-            (":description", &response.name),
+            (":name", &response.name),
+            (":description", &response.display_name),
         ],
     ) {
         Ok(_) => HttpResponse::Created(),
