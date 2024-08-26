@@ -4,10 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'variables.dart';
 
-
 class SideMenu extends StatefulWidget {
   final Widget body;
-  final int selectedIndex ;
+  final int selectedIndex;
 
   const SideMenu({super.key, required this.body,  required this.selectedIndex});
 
@@ -29,17 +28,15 @@ class _SideMenuState extends State<SideMenu> {
 
     prefs.remove('token');
     prefs.remove('id');
+
     setState(() {
       loggedIn = false;
       user = null;
-      });
-
+    });
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Successfully logged out')));
-          Navigator.pushReplacementNamed(context, '/login');
-
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Successfully logged out')));
+      Navigator.pushReplacementNamed(context, '/login');
     }
   }
 
@@ -47,13 +44,11 @@ class _SideMenuState extends State<SideMenu> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    api
-       .isLoggedIn(context).then((value) {
-        setState(() {
-          loggedIn = value; // Update the second variable here
-  });
-});
-
+    api.isLoggedIn(context).then((value) {
+      setState(() {
+        loggedIn = value; // Update the second variable here
+      });
+    });
   }
 
   @override
@@ -79,20 +74,17 @@ Widget build(BuildContext context) {
         children: [
           DrawerHeader(
             child: Column(
-            children: [
-              const Image(
-              image: AssetImage('assets/logo.png'),
-              height: 100,
-              ),
-              Text(
-                'SkanTravels',
-                style: GoogleFonts.jacquesFrancois(
-                  fontSize: 20,
-                  color: Color(0xFF1862E7),
+              children: [
+                const Image(image: AssetImage('assets/logo.png'), height: 100),
+                Text(
+                  'SkanTravels',
+                  style: GoogleFonts.jacquesFrancois(
+                    fontSize: 20,
+                    color: const Color(0xFF1862E7),
+                  ),
                 ),
-              ),
-            ],
-            )
+              ],
+            ),
           ),
           ListTile(
             title: const Text('Home'),
@@ -124,32 +116,33 @@ Widget build(BuildContext context) {
             indent: 40,
           ),
           ...(loggedIn
-              ? [
-                  ListTile(
-                    title: const Text('Log out'),
-                    leading: const Icon(Icons.logout),
-                    selected: false,
-                    onTap: _logout,
-                  )
-                ]
-              : [
-                  ListTile(
-                    title: const Text('Register'),
-                    leading: const Icon(Icons.add_box_outlined),
-                    selected: _selectedIndex == 3,
-                    onTap: () {
-                      Navigator.pushReplacementNamed(context, '/register');
-                    },
-                  ),
-                  ListTile(
-                    title: const Text('Login'),
-                    leading: const Icon(Icons.login),
-                    selected: _selectedIndex == 4,
-                    onTap: () {
-                      Navigator.pushReplacementNamed(context, '/login');
-                    },
-                  )
-                ])
+            ? [
+                ListTile(
+                  title: const Text('Log out'),
+                  leading: const Icon(Icons.logout),
+                  selected: false,
+                  onTap: _logout,
+                ),
+              ]
+            : [
+                ListTile(
+                  title: const Text('Register'),
+                  leading: const Icon(Icons.add_box_outlined),
+                  selected: _selectedIndex == 3,
+                  onTap: () {
+                    Navigator.pushReplacementNamed(context, '/register');
+                  },
+                ),
+                ListTile(
+                  title: const Text('Login'),
+                  leading: const Icon(Icons.login),
+                  selected: _selectedIndex == 4,
+                  onTap: () {
+                    Navigator.pushReplacementNamed(context, '/login');
+                  },
+                ),
+              ]
+          ),
         ],
       ),
     ),

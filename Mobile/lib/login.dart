@@ -34,9 +34,9 @@ class _LoginPageState extends State<LoginPage> {
     prefs.setString('token', jsonUser.token);
     prefs.setString('id', jsonUser.id);
  
-    setState(()
-    {loggedIn == true;});
-    
+    setState(() {
+      loggedIn == true;
+    });
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Successfully logged in')));
@@ -50,14 +50,11 @@ class _LoginPageState extends State<LoginPage> {
       selectedIndex: 4,
       body: Scaffold(
         body: SingleChildScrollView(
-        child: Center(
-          child: Container(
-            constraints: const BoxConstraints(minWidth: 100, maxWidth: 400),
-            child: Column(children: [
-              const Image(
-                image: AssetImage('assets/logo.png'),
-                height: 200,
-                ),
+          child: Center(
+            child: Container(
+              constraints: const BoxConstraints(minWidth: 100, maxWidth: 400),
+              child: Column(children: [
+                const Image(image: AssetImage('assets/logo.png'), height: 200),
                 Text(
                   'SkanTravels',
                   style: GoogleFonts.jacquesFrancois(
@@ -65,28 +62,28 @@ class _LoginPageState extends State<LoginPage> {
                     color: const Color(0xFF1862E7),
                   ),
                 ),
-              const SizedBox(height: 40),
-              const Text('Email'),
-              TextField(controller: emailInput),
-              const SizedBox(height: 30),
-              const Text('Password'),
-              TextField(
-                controller: passwordInput,
-                obscureText: true,
-                enableSuggestions: false,
-                autocorrect: false,
-              ),
-              const SizedBox(height: 30),
-              ElevatedButton(onPressed: _login, child: const Text('Login')),
-              const SizedBox(height: 10),
-              const Text('or'),
-              TextButton(
-                child: const Text('Register account'),
-                onPressed: () => Navigator.pushReplacementNamed(context, '/register')
-              ),
-            ]),
+                const SizedBox(height: 40),
+                const Text('Email'),
+                TextField(controller: emailInput),
+                const SizedBox(height: 30),
+                const Text('Password'),
+                TextField(
+                  controller: passwordInput,
+                  obscureText: true,
+                  enableSuggestions: false,
+                  autocorrect: false,
+                ),
+                const SizedBox(height: 30),
+                ElevatedButton(onPressed: _login, child: const Text('Login')),
+                const SizedBox(height: 10),
+                const Text('or'),
+                TextButton(
+                  child: const Text('Register account'),
+                  onPressed: () => Navigator.pushReplacementNamed(context, '/register')
+                ),
+              ]),
+            ),
           ),
-        ),
         ),
       ),
     );
