@@ -34,8 +34,9 @@ class _FavoritesPage extends State<FavoritesPage> {
   @override
   Widget build(BuildContext context) {
     return SideMenu(
+      selectedIndex: 1,
       body: Container(
-        decoration: BoxDecoration(color: Color(0xFFF9F9F9)),
+        decoration: const BoxDecoration(color: Color(0xFFF9F9F9)),
         width: MediaQuery.of(context).size.width,
         padding: const EdgeInsets.all(20.0),
         child: Column(children:

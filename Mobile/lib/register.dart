@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/base/sidemenu.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'api.dart' as api;
 
 class RegisterPage extends StatefulWidget {
@@ -38,12 +39,24 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return SideMenu(
+      selectedIndex: 3,
       body: Scaffold(
         body: Center(
           child: Container(
             constraints: const BoxConstraints(minWidth: 100, maxWidth: 400),
             child: Column(children: [
-              const SizedBox(height: 80),
+               const Image(
+                image: AssetImage('assets/logo.png'),
+                height: 200,
+                ),
+                Text(
+                  'SkanTravels',
+                  style: GoogleFonts.jacquesFrancois(
+                    fontSize: 30,
+                    color: Color(0xFF1862E7),
+                  ),
+                ),
+              const SizedBox(height: 40),
               const Text('Username'),
               TextField(controller: usernameInput),
               const SizedBox(height: 30),
@@ -70,6 +83,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ElevatedButton(
                   onPressed: _register, child: const Text('Register')),
               const SizedBox(height: 10),
+              const Text('or'),
               TextButton(
                   child: const Text('Login'),
                   onPressed: () => Navigator.pushReplacementNamed(context, '/login')),

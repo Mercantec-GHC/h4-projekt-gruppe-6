@@ -1,9 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'base/variables.dart';
 
 enum ApiService {
   auth,
@@ -67,7 +66,10 @@ Future<bool> isLoggedIn(BuildContext context) async {
   final prefs = await SharedPreferences.getInstance();
 
   final token = prefs.getString('token');
-  if (token == null) return false;
+  if (token == null){
+    loggedIn = false;
+    return false;
+  }
 
   try {
     String base64 = token.split('.')[1];

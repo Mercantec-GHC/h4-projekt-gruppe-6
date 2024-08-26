@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/base/sidemenu.dart';
+import 'package:mobile/base/variables.dart';
+import 'package:mobile/models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'dart:convert';
 import 'api.dart' as api;
 
 class LoginPage extends StatefulWidget {
@@ -22,8 +26,17 @@ class _LoginPageState extends State<LoginPage> {
 
     if (token == null) return;
 
+    // Assuming token is a JSON string
+    Map<String, dynamic> json = jsonDecode(token);
+    Login jsonUser = Login.fromJson(json);
+
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString('token', token);
+    prefs.setString('token', jsonUser.token);
+    prefs.setString('id', jsonUser.id);
+ 
+    setState(()
+    {loggedIn == true;});
+    
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Successfully logged in')));
@@ -34,12 +47,24 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return SideMenu(
+      selectedIndex: 4,
       body: Scaffold(
         body: Center(
           child: Container(
             constraints: const BoxConstraints(minWidth: 100, maxWidth: 400),
             child: Column(children: [
-              const SizedBox(height: 80),
+              const Image(
+                image: AssetImage('assets/logo.png'),
+                height: 200,
+                ),
+                Text(
+                  'SkanTravels',
+                  style: GoogleFonts.jacquesFrancois(
+                    fontSize: 30,
+                    color: const Color(0xFF1862E7),
+                  ),
+                ),
+              const SizedBox(height: 40),
               const Text('Email'),
               TextField(controller: emailInput),
               const SizedBox(height: 30),
@@ -53,6 +78,7 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 30),
               ElevatedButton(onPressed: _login, child: const Text('Login')),
               const SizedBox(height: 10),
+              const Text('or'),
               TextButton(
                 child: const Text('Register account'),
                 onPressed: () => Navigator.pushReplacementNamed(context, '/register')
