@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -69,7 +71,7 @@ Future<bool> isLoggedIn(BuildContext context) async {
 
   try {
     String base64 = token.split('.')[1];
-    base64 += List.filled(4 - base64.length % 4, '=').join();
+    base64 += List.filled(base64.length % 4 == 0 ? 0 : 4 - base64.length % 4, '=').join();
 
     final payload = jsonDecode(String.fromCharCodes(base64Decode(base64)));
 
@@ -81,6 +83,7 @@ Future<bool> isLoggedIn(BuildContext context) async {
   } catch (e) {
     messenger.showSnackBar(const SnackBar(content: Text('Invalid token, please sign in again')));
     prefs.remove('token');
+    debugPrint(e.toString());
     return false;
   }
 

@@ -83,14 +83,14 @@ class _SideMenuState extends State<SideMenu> {
               },
             ),
             ListTile(
-              title: const Text('Favourites'),
+              title: const Text('Favorites'),
               leading: const Icon(Icons.star),
               selected: _selectedIndex == 1,
               onTap: () {
                 // Update the state of the app
                 _onItemTapped(1);
                 // Then close the drawer
-                Navigator.pushReplacementNamed(context, '/favourites');
+                Navigator.pushReplacementNamed(context, '/favorites');
               },
             ),
             ListTile(
