@@ -3,8 +3,10 @@ class Favorite {
   String userId;
   double lat;
   double lng;
+  String name;
+  String description;
 
-  Favorite(this.id, this.userId, this.lat, this.lng);
+  Favorite(this.id, this.userId, this.lat, this.lng, this.name, this.description);
 }
 
 class Login {

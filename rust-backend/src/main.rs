@@ -58,12 +58,18 @@ struct CreateFavoriteRequest {
     lng: f64,
 }
 
+#[derive(Deserialize)]
+struct ReverseLookupResponse {
+    name: String,
+    display_name: String,
+}
+
 #[post("/favorites")]
 async fn create_favorite(auth: AuthorizedUser, data: web::Data<AppData>, input: web::Json<CreateFavoriteRequest>) -> impl Responder {
     let db = data.database.lock().unwrap();
-
+    let body = reqwest::blocking::get("https://nominatim.openstreetmap.org/reverse.php?lat=54.951489&lon=9.703438&zoom=18&format=jsonv2").json::<ReverseLookupResponse>();
     match db.execute(
-        "INSERT INTO favorites (user_id, lat, lng) VALUES (:user_id, :lat, :lng)",
+        "INSERT INTO favorites (user_id, lat, lng, name, description) VALUES (:user_id, :lat, :lng, :name, :description)",
         &[(":user_id", &auth.user_id), (":lat", &input.lat.to_string()), (":lng", &input.lng.to_string())]
     ) {
         Ok(_) => HttpResponse::Created(),

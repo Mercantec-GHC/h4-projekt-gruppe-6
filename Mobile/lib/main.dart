@@ -60,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       final List<dynamic> favorites = jsonDecode(response);
       setState(() {
-        _favorites = favorites.map((favorite) => Favorite(favorite['id'], favorite['user_id'], favorite['lat'], favorite['lng'])).toList();
+        _favorites = favorites.map((favorite) => Favorite(favorite['id'], favorite['user_id'], favorite['lat'], favorite['lng'], favorite['name'], favorite['description'])).toList();
       });
     });
 

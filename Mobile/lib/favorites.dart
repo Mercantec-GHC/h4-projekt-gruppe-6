@@ -26,11 +26,11 @@ class _FavoritesPage extends State<FavoritesPage> {
 
       final List<dynamic> favorites = jsonDecode(response);
       setState(() {
-        _favorites = favorites.map((favorite) => Favorite(favorite['id'], favorite['user_id'], favorite['lat'], favorite['lng'])).toList();
+        _favorites = favorites.map((favorite) => Favorite(favorite['id'], favorite['user_id'], favorite['lat'], favorite['lng'], favorite['name'], favorite['description'])).toList();
       });
     });
-
   }
+
   @override
   Widget build(BuildContext context) {
     return SideMenu(
@@ -53,7 +53,7 @@ class _FavoritesPage extends State<FavoritesPage> {
               ],
               color: Colors.white
             ),
-            child: const Text("Favorite data here"),
+            child: const Text('Favorittekst'),
           )).toList(),
         ),
       ),
