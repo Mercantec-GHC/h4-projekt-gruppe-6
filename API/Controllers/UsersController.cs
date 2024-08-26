@@ -20,7 +20,6 @@ namespace API.Controllers
         private readonly QueryUserById _queryUserById;
         private readonly CreateUser _createUser;
         private readonly UpdateUser _updateUser;
-        private readonly UpdateUserPassword _updateUserPassword;
         private readonly DeleteUser _deleteUser;
         private readonly LoginUser _loginUser;
 
@@ -29,7 +28,6 @@ namespace API.Controllers
             QueryUserById queryUserById,
             CreateUser createUser,
             UpdateUser updateUser,
-            UpdateUserPassword updateUserPassword,
             DeleteUser deleteUser,
             LoginUser loginUser)
         {
@@ -37,7 +35,6 @@ namespace API.Controllers
             _queryUserById = queryUserById;
             _createUser = createUser;
             _updateUser = updateUser;
-            _updateUserPassword = updateUserPassword;
             _deleteUser = deleteUser;
             _loginUser = loginUser;
         }
@@ -65,16 +62,9 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPut]
-        public async Task<IActionResult> PutUser(UserDTO userDTO)
+        public async Task<IActionResult> PutUser(UpdateUserDTO UpdateUserDTO)
         {
-            return await _updateUser.Handle(userDTO);
-        }
-
-        [Authorize]
-        [HttpPut("password")]
-        public async Task<IActionResult> PutUserPassword(ChangePasswordDTO changePasswordDTO)
-        {
-            return await _updateUserPassword.Handle(changePasswordDTO);
+            return await _updateUser.Handle(UpdateUserDTO);
         }
 
         [HttpPost]

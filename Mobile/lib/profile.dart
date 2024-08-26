@@ -6,6 +6,7 @@ import 'package:mobile/models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'base/sidemenu.dart';
 import 'api.dart' as api;
+import 'editprofile.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -105,9 +106,18 @@ class _ProfilePageState extends State<ProfilePage> {
                       const SizedBox(height: 50),
                       ElevatedButton(
                         onPressed: () {
-                          // Add your edit action here
-                        },
-                        child: const Text('Edit'),
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (BuildContext context) {
+                            return SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.9, // 90% height
+                              child: EditProfilePage(userData: user),
+                            );
+                          },
+                        );
+                      },
+                      child: const Text('Edit'),
                       ),
                     ],
                   ),

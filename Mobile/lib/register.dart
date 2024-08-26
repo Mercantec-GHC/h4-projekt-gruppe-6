@@ -42,7 +42,7 @@ Widget build(BuildContext context) {
     selectedIndex: 3,
     body: Scaffold(
       body: SingleChildScrollView(
-        child: Center( // Added SingleChildScrollView here
+        child: Center(
           child: Container(
             constraints: const BoxConstraints(minWidth: 100, maxWidth: 400),
             child: Column(

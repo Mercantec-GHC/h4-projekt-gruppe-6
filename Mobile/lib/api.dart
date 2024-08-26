@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -67,7 +68,9 @@ Future<bool> isLoggedIn(BuildContext context) async {
 
   final token = prefs.getString('token');
   if (token == null){
+    prefs.remove('id');
     loggedIn = false;
+    user = User as User?;
     return false;
   }
 

@@ -28,8 +28,10 @@ class _SideMenuState extends State<SideMenu> {
     final prefs = await SharedPreferences.getInstance();
 
     prefs.remove('token');
+    prefs.remove('id');
     setState(() {
       loggedIn = false;
+      user = null;
       });
 
 
