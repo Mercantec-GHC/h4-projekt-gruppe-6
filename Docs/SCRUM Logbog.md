@@ -131,7 +131,7 @@ KC - Kundechef
 
 **PO(Reimar):**
 
-**KC(Philip):**
+**KC(Philip):*Ingen kontakt fra programmeringsgruppen. Behøves heller ikke på nuværende tidspunkt*
 
 ## Tirsdag
 
