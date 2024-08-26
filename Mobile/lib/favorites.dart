@@ -42,7 +42,8 @@ class _FavoritesPage extends State<FavoritesPage> {
         child: Column(children:
           _favorites.map((favorite) => Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(20),
+            margin: const EdgeInsets.only(bottom: 10),
             decoration: const BoxDecoration(
               boxShadow: [
                 BoxShadow(
@@ -53,7 +54,24 @@ class _FavoritesPage extends State<FavoritesPage> {
               ],
               color: Colors.white
             ),
-            child: const Text('Favorittekst'),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(padding: EdgeInsets.only(top: 3), child: Icon(Icons.star, color: Colors.yellow, size: 36)),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(favorite.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
+                      Text(favorite.description),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 20),
+                const Padding(padding: EdgeInsets.only(top: 5), child: Icon(Icons.delete, color: Colors.grey)),
+              ],
+            ),
           )).toList(),
         ),
       ),
