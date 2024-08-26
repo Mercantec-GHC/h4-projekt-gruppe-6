@@ -49,7 +49,8 @@ class _LoginPageState extends State<LoginPage> {
     return SideMenu(
       selectedIndex: 4,
       body: Scaffold(
-        body: Center(
+        body: SingleChildScrollView(
+        child: Center(
           child: Container(
             constraints: const BoxConstraints(minWidth: 100, maxWidth: 400),
             child: Column(children: [
@@ -85,6 +86,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ]),
           ),
+        ),
         ),
       ),
     );

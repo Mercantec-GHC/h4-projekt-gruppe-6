@@ -29,9 +29,9 @@ namespace API.Application.Users.Commands
             {
                 return new UnauthorizedObjectResult(new { message = "Invalid email or password." });
             }
-            var token = GenerateJwtToken(user);
+            var jwtToken = GenerateJwtToken(user);
 
-            return new OkObjectResult(token);
+            return new OkObjectResult(new { token = jwtToken, id = user.Id});
 
         }
 

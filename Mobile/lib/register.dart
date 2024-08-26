@@ -37,17 +37,19 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return SideMenu(
-      selectedIndex: 3,
-      body: Scaffold(
-        body: Center(
+Widget build(BuildContext context) {
+  return SideMenu(
+    selectedIndex: 3,
+    body: Scaffold(
+      body: SingleChildScrollView(
+        child: Center( // Added SingleChildScrollView here
           child: Container(
             constraints: const BoxConstraints(minWidth: 100, maxWidth: 400),
-            child: Column(children: [
-               const Image(
-                image: AssetImage('assets/logo.png'),
-                height: 200,
+            child: Column(
+              children: [
+                const Image(
+                  image: AssetImage('assets/logo.png'),
+                  height: 200,
                 ),
                 Text(
                   'SkanTravels',
@@ -56,43 +58,45 @@ class _RegisterPageState extends State<RegisterPage> {
                     color: Color(0xFF1862E7),
                   ),
                 ),
-              const SizedBox(height: 40),
-              const Text('Username'),
-              TextField(controller: usernameInput),
-              const SizedBox(height: 30),
-              const Text('Email'),
-              TextField(controller: emailInput),
-              const SizedBox(height: 30),
-              const Text('Password'),
-              TextField(
-                controller: passwordInput,
-                obscureText: true,
-                enableSuggestions: false,
-                autocorrect: false
-              ),
-              const SizedBox(height: 30),
-              const Text('Confirm Password'),
-              TextField(
-                controller: confirmPasswordInput,
-                obscureText: true,
-                enableSuggestions: false,
-                autocorrect: false,
-              ),
-              const SizedBox(height: 30),
-
-              ElevatedButton(
-                  onPressed: _register, child: const Text('Register')),
-              const SizedBox(height: 10),
-              const Text('or'),
-              TextButton(
-                  child: const Text('Login'),
-                  onPressed: () => Navigator.pushReplacementNamed(context, '/login')),
-            ]),
+                const SizedBox(height: 40),
+                const Text('Username'),
+                TextField(controller: usernameInput),
+                const SizedBox(height: 30),
+                const Text('Email'),
+                TextField(controller: emailInput),
+                const SizedBox(height: 30),
+                const Text('Password'),
+                TextField(
+                    controller: passwordInput,
+                    obscureText: true,
+                    enableSuggestions: false,
+                    autocorrect: false
+                ),
+                const SizedBox(height: 30),
+                const Text('Confirm Password'),
+                TextField(
+                  controller: confirmPasswordInput,
+                  obscureText: true,
+                  enableSuggestions: false,
+                  autocorrect: false,
+                ),
+                const SizedBox(height: 30),
+                ElevatedButton(
+                    onPressed: _register, child: const Text('Register')),
+                const SizedBox(height: 10),
+                const Text('or'),
+                TextButton(
+                    child: const Text('Login'),
+                    onPressed: () => Navigator.pushReplacementNamed(context, '/login')),
+              ],
+            ),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   @override
   void dispose() {

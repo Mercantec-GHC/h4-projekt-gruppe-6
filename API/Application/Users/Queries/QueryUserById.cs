@@ -2,6 +2,7 @@
 using API.Persistence.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using Newtonsoft.Json.Linq;
 
 namespace API.Application.Users.Queries
 {
@@ -23,14 +24,8 @@ namespace API.Application.Users.Queries
                 return new ConflictObjectResult(new { message = "No user on given Id" });
             }
 
-            UserDTO userDTO = new UserDTO
-            {
-                Id = user.Id,
-                Email = user.Email,
-                Username = user.Username
-            };
+            return new OkObjectResult(new { id = user.Id, email = user.Email, username = user.Username, createdAt = user.CreatedAt });
 
-            return userDTO;
         }
 
     }
