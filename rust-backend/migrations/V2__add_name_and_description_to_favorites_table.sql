@@ -1,3 +1,5 @@
+DELETE FROM favorites;
+
 ALTER TABLE favorites ADD COLUMN name TEXT NOT NULL;
 ALTER TABLE favorites ADD COLUMN description TEXT NOT NULL;
 

@@ -49,7 +49,7 @@ fn get_authorized_user(req: &HttpRequest) -> Option<AuthorizedUser> {
         return None;
     }
 
-    let header: Value = serde_json::from_slice(&URL_SAFE_NO_PAD.decode(jwt_parts.get(0).unwrap()).ok()?).ok()?;
+    let _header: Value = serde_json::from_slice(&URL_SAFE_NO_PAD.decode(jwt_parts.get(0).unwrap()).ok()?).ok()?;
     let payload: Value = serde_json::from_slice(&URL_SAFE_NO_PAD.decode(jwt_parts.get(1).unwrap()).ok()?).ok()?;
     let signature = URL_SAFE_NO_PAD.decode(jwt_parts.get(2).unwrap()).ok()?;
 

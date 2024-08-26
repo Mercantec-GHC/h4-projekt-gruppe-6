@@ -8,6 +8,8 @@ pub struct Favorite {
     pub user_id: String,
     pub lat: f64,
     pub lng: f64,
+    pub name: String,
+    pub description: String,
 }
 
 impl Favorite {
@@ -17,6 +19,8 @@ impl Favorite {
             user_id: row.get("user_id")?,
             lat: row.get("lat")?,
             lng: row.get("lng")?,
+            name: row.get("name")?,
+            description: row.get("description")?,
         })
     }
 }
