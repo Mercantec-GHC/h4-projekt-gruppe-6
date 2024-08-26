@@ -112,11 +112,146 @@ KC - Kundechef
 
 **SM(Reimar):**
 
+**PO(Philip):** færdig med side-menu som funger på alle sider.
+
+## Fredag
+
+**KC(Alexander):** 
+
+**SM(Reimar):** 
+
+**PO(Philip):** 
+
+
+# Uge 35
+
+## Mandag
+
+**SM(Alexander):**
+
+**PO(Reimar):**
+
+**KC(Philip):**
+
+## Tirsdag
+
+**SM(Alexander):**
+
+**PO(Reimar):**
+
+**KC(Philip):**
+
+## Onsdag
+
+**SM(Alexander):**
+
+**PO(Reimar):**
+
+**KC(Philip):**
+
+## Torsdag
+
+**SM(Alexander):**
+
+**PO(Reimar):**
+
+**KC(Philip):**
+
+## Fredag
+
+**SM(Alexander):**
+
+**PO(Reimar):**
+
+**KC(Philip):**
+
+# Uge 36
+
+## Mandag
+
+**PO(Alexander):**
+
+**KC(Reimar):**
+
+**SM(Philip):**
+
+## Tirsdag
+
+**PO(Alexander):**
+
+**KC(Reimar):**
+
+**SM(Philip):**
+
+## Onsdag
+
+**PO(Alexander):**
+
+**KC(Reimar):**
+
+**SM(Philip):**
+
+## Torsdag
+
+**PO(Alexander):**
+
+**KC(Reimar):**
+
 **PO(Philip):**
 
 ## Fredag
 
-**KC(Alexander):** Havde kundemøde med vores udviklergruppe - De regner med at starte på core-mechanics på spillet i næste uge. 
+**PO(Alexander):**
+
+**KC(Reimar):**
+
+**SM(Philip):**
+
+# Uge 37
+
+## Mandag
+
+**KC(Alexander):**
+
+**SM(Reimar):**
+
+**PO(Philip):**
+
+## Tirsdag
+
+**KC(Alexander):**
+
+**SM(Reimar):**
+
+**PO(Philip):**
+
+## Onsdag
+
+**KC(Alexander):**
+
+**SM(Reimar):**
+
+**PO(Philip):**
+
+## Torsdag
+
+**KC(Alexander):**
+
+**SM(Reimar):**
+
+**PO(Philip):**
+
+## Fredag
+
+**KC(Alexander):**
+
+**SM(Reimar):**
+
+**PO(Philip):**
+
+## Fredag
+
+**KC(Alexander):**
 
 **SM(Reimar):**
 
