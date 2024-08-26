@@ -116,7 +116,7 @@ KC - Kundechef
 
 ## Fredag
 
-**KC(Alexander):** 
+**KC(Alexander):** Afholdte møde med vores udviklergruppe, De planlægger at lave core gameplay features i uge 35
 
 **SM(Reimar):** 
 
@@ -127,7 +127,7 @@ KC - Kundechef
 
 ## Mandag
 
-**SM(Alexander):**
+**SM(Alexander):** Satte SCRUM møder op for denne og følgende uger. Var ellers syg.
 
 **PO(Reimar):**
 
