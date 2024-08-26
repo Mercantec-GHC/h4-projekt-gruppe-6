@@ -120,7 +120,7 @@ KC - Kundechef
 
 **SM(Reimar):** 
 
-**PO(Philip):** 
+**PO(Philip):** Havde møde med Freja. De bad om at når man opdaterer en brugers info. så skal man kunne opdatere det hele. Før havde vi snakket oma at opdatere password for sig selv. og alt andet for sig selv
 
 
 # Uge 35
