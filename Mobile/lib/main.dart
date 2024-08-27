@@ -81,14 +81,15 @@ class _MyHomePageState extends State<MyHomePage> {
               MarkerLayer(markers: [
                 Marker(
                   point: LatLng(favorite.lat, favorite.lng),
-                  width: 60,
-                  height: 100,
+                  width: 30,
+                  height: 50,
                   alignment: Alignment.center,
-                  child: const Icon(
-                    Icons.location_pin,
-                    size: 60,
-                    color: Colors.yellow,
-                  )
+                  child: const Stack(
+                    children: [
+                      Icon(Icons.location_pin, size: 30, color: Colors.yellow),
+                      Icon(Icons.location_on_outlined, size: 30, color: Colors.black),
+                    ]
+                  ),
                 )
               ])
             ),
@@ -99,7 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   TileLayer get openStreetMapTileLayer => TileLayer(
-        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-        userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-      );
+    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+  );
 }
