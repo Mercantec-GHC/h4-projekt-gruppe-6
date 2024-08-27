@@ -47,7 +47,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final GlobalKey<ScaffoldState> _locationScaffoldKey = GlobalKey<ScaffoldState>();
   List<Favorite> _favorites = [];
   LatLng? _selectedPoint;
 
@@ -114,10 +113,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _toggleFavorite(LatLng point, String name, String description, StateSetter setModalState, BuildContext context) async {
     final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
     final favorite = _favorites.where((fav) => fav.lat == point.latitude && fav.lng == point.longitude).firstOrNull;
 
     if (!await api.isLoggedIn(context)) {
-      messenger.showSnackBar(const SnackBar(content: Text('You need to login to do that')));
+      messenger.showSnackBar(const SnackBar(content: Text('You need to login to do that'), behavior: SnackBarBehavior.floating));
+      navigator.pop();
       return;
     }
 
@@ -125,18 +126,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (favorite == null) {
       if (await api.request(context, api.ApiService.app, 'POST', '/favorites', {'lat': point.latitude, 'lng': point.longitude}) == null) {
+        navigator.pop();
         return;
       }
 
       _fetchFavorites();
       setModalState(() {});
 
-      messenger.showSnackBar(const SnackBar(content: Text('Added to favorites')));
-
       return;
     }
 
     if (await api.request(context, api.ApiService.app, 'DELETE', '/favorites/${favorite.id}', null) == null) {
+      navigator.pop();
       return;
     }
 
@@ -144,8 +145,6 @@ class _MyHomePageState extends State<MyHomePage> {
       _favorites = _favorites.where((fav) => fav.id != favorite.id).toList();
     });
     setModalState(() {});
-
-    messenger.showSnackBar(const SnackBar(content: Text('Removed from favorites')));
   }
 
   void _fetchFavorites() async {
@@ -184,24 +183,21 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           children: [
             openStreetMapTileLayer,
-            ...(
-                _selectedPoint != null ? [
-                  MarkerLayer(markers: [
-                    Marker(
-                      point: _selectedPoint!,
-                      width: 30,
-                      height: 50,
-                      alignment: Alignment.center,
-                      child: const Stack(
-                          children: [
-                            Icon(Icons.location_pin, size: 30, color: Colors.red),
-                            Icon(Icons.location_on_outlined, size: 30, color: Colors.black),
-                          ]
-                      ),
-                    )
-                  ]),
-                ] : []
-            ),
+            if (_selectedPoint != null)
+              MarkerLayer(markers: [
+                Marker(
+                  point: _selectedPoint!,
+                  width: 30,
+                  height: 50,
+                  alignment: Alignment.center,
+                  child: const Stack(
+                      children: [
+                        Icon(Icons.location_pin, size: 30, color: Colors.red),
+                        Icon(Icons.location_on_outlined, size: 30, color: Colors.black),
+                      ]
+                  ),
+                )
+              ]),
             ..._favorites.map((favorite) =>
               MarkerLayer(markers: [
                 Marker(
