@@ -14,6 +14,34 @@ class FavoritesPage extends StatefulWidget {
 class _FavoritesPage extends State<FavoritesPage> {
   List<Favorite> _favorites = [];
 
+  void _confirmDeleteFavorite(Favorite favorite) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Remove favorite'),
+          content: Text('Are you sure you want to remove ${favorite.name} from your favorites list?'),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+            TextButton(onPressed: () => _deleteFavorite(favorite), child: const Text('Remove', style: TextStyle(color: Colors.red))),
+          ],
+        );
+      }
+    );
+  }
+
+  void _deleteFavorite(Favorite favorite) async {
+    Navigator.pop(context);
+
+    if (await api.request(context, api.ApiService.app, 'DELETE', '/favorites/${favorite.id}', null) == null) {
+      return;
+    }
+
+    setState(() {
+      _favorites = _favorites.where((fav) => fav.id != favorite.id).toList();
+    });
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -57,7 +85,10 @@ class _FavoritesPage extends State<FavoritesPage> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Padding(padding: EdgeInsets.only(top: 3), child: Icon(Icons.star, color: Colors.yellow, size: 36)),
+                const Padding(
+                  padding: EdgeInsets.only(top: 3),
+                  child: Icon(Icons.star, color: Colors.yellow, size: 36)
+                ),
                 const SizedBox(width: 20),
                 Expanded(
                   child: Column(
@@ -69,7 +100,7 @@ class _FavoritesPage extends State<FavoritesPage> {
                   ),
                 ),
                 const SizedBox(width: 20),
-                const Padding(padding: EdgeInsets.only(top: 5), child: Icon(Icons.delete, color: Colors.grey)),
+                IconButton(icon: const Icon(Icons.delete), color: Colors.grey, onPressed: () => _confirmDeleteFavorite(favorite)),
               ],
             ),
           )).toList(),
