@@ -47,6 +47,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   List<Favorite> _favorites = [];
+  LatLng? _selectedPoint;
+
+  void _showLocation(TapPosition _, LatLng point) {
+    setState(() => _selectedPoint = point);
+  }
 
   @override
   void didChangeDependencies() {
@@ -63,7 +68,6 @@ class _MyHomePageState extends State<MyHomePage> {
         _favorites = favorites.map((favorite) => Favorite(favorite['id'], favorite['user_id'], favorite['lat'], favorite['lng'], favorite['name'], favorite['description'])).toList();
       });
     });
-
   }
 
   @override
@@ -74,7 +78,11 @@ class _MyHomePageState extends State<MyHomePage> {
         key: _scaffoldKey,
         //drawer: navigationMenu,
         body: FlutterMap(
-          options: const MapOptions(initialCenter: LatLng(55.9397, 9.5156), initialZoom: 7.0),
+          options: MapOptions(
+            initialCenter: const LatLng(55.9397, 9.5156),
+            initialZoom: 7.0,
+            onTap: _showLocation,
+          ),
           children: [
             openStreetMapTileLayer,
             ..._favorites.map((favorite) =>
@@ -91,7 +99,25 @@ class _MyHomePageState extends State<MyHomePage> {
                     ]
                   ),
                 )
-              ])
+              ]),
+            ),
+            ...(
+              _selectedPoint != null ? [
+                MarkerLayer(markers: [
+                  Marker(
+                    point: _selectedPoint!,
+                    width: 30,
+                    height: 50,
+                    alignment: Alignment.center,
+                    child: const Stack(
+                      children: [
+                        Icon(Icons.location_pin, size: 30, color: Colors.red),
+                        Icon(Icons.location_on_outlined, size: 30, color: Colors.black),
+                      ]
+                    ),
+                  )
+                ]),
+              ] : []
             ),
           ],
         ),
