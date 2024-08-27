@@ -4,7 +4,7 @@ use rusqlite::{Row, Error};
 
 #[derive(Serialize)]
 pub struct Favorite {
-    pub id: usize,
+    pub id: i64,
     pub user_id: String,
     pub lat: f64,
     pub lng: f64,

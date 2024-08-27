@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -49,6 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   List<Favorite> _favorites = [];
   LatLng? _selectedPoint;
+  double _zoom = 7.0;
 
   void _onTap(TapPosition _, LatLng point) async {
     setState(() => _selectedPoint = point);
@@ -56,12 +58,13 @@ class _MyHomePageState extends State<MyHomePage> {
     final dynamic location;
     try {
       final response = await http.get(
-        Uri.parse('https://nominatim.openstreetmap.org/reverse.php?lat=${point.latitude}&lon=${point.longitude}&zoom=18&format=jsonv2'),
+        Uri.parse('https://nominatim.openstreetmap.org/reverse.php?lat=${point.latitude}&lon=${point.longitude}&zoom=${max(12, _zoom.ceil())}&format=jsonv2'),
         headers: {'User-Agent': 'SkanTravels/1.0'},
       );
 
       if (mounted && response.statusCode != 200) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Unable to fetch information about this location (HTTP ${response.statusCode})')));
+        debugPrint(response.body);
         return;
       }
 
@@ -136,12 +139,19 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!context.mounted) return;
 
     if (favorite == null) {
-      if (await api.request(context, api.ApiService.app, 'POST', '/favorites', {'lat': point.latitude, 'lng': point.longitude}) == null) {
+      final newFavorite = await api.request(
+          context, api.ApiService.app, 'POST', '/favorites',
+          {'lat': point.latitude, 'lng': point.longitude, 'name': name, 'description': description},
+      );
+
+      if (newFavorite == null) {
         navigator.pop();
         return;
       }
 
-      await _fetchFavorites();
+      setState(() {
+        _favorites.add(Favorite.fromJson(jsonDecode(newFavorite)));
+      });
       setModalState(() {});
 
       return;
@@ -164,7 +174,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final List<dynamic> favorites = jsonDecode(response);
     setState(() {
-      _favorites = favorites.map((favorite) => Favorite(favorite['id'], favorite['user_id'], favorite['lat'], favorite['lng'], favorite['name'], favorite['description'])).toList();
+      _favorites = favorites.map((favorite) => Favorite.fromJson(favorite)).toList();
     });
   }
 
@@ -189,8 +199,9 @@ class _MyHomePageState extends State<MyHomePage> {
         body: FlutterMap(
           options: MapOptions(
             initialCenter: const LatLng(55.9397, 9.5156),
-            initialZoom: 7.0,
+            initialZoom: _zoom,
             onTap: _onTap,
+            onPositionChanged: (pos, _) => _zoom = pos.zoom,
           ),
           children: [
             openStreetMapTileLayer,
