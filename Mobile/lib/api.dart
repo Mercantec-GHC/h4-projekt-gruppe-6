@@ -67,10 +67,8 @@ Future<bool> isLoggedIn(BuildContext context) async {
   final prefs = await SharedPreferences.getInstance();
 
   final token = prefs.getString('token');
-  if (token == null){
+  if (token == null) {
     prefs.remove('id');
-    loggedIn = false;
-    user = User as User?;
     return false;
   }
 
