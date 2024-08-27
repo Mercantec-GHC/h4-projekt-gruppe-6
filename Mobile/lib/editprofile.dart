@@ -1,5 +1,3 @@
-import 'dart:math';
-import 'dart:developer' as useMAN;
 import 'package:flutter/material.dart';
 import 'package:mobile/models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,6 +19,8 @@ class _ProfilePageState extends State<EditProfilePage> {
   TextEditingController emailInput = TextEditingController();
   TextEditingController passwordInput = TextEditingController();
   TextEditingController confirmPasswordInput = TextEditingController();
+  
+  set userData(User userData) {}
 
 
  @override
@@ -66,17 +66,20 @@ class _ProfilePageState extends State<EditProfilePage> {
       return;
     }
 
-    useMAN.log('data');
-
     if (response != null) {
-      user = User(
+      User updatedUser = User(
         id!,
         emailInput.text,
         usernameInput.text,
         DateTime.now(),
       );
+      setState(() {
+        user = updatedUser;
+      });
 
       Navigator.of(context).pop(); // Close the dialog
+      Navigator.pushReplacementNamed(context, '/profile');
+
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Something went wrong! Please contact an admin.')),

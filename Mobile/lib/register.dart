@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/base/sidemenu.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile/base/variables.dart';
 import 'api.dart' as api;
 
 class RegisterPage extends StatefulWidget {
@@ -35,6 +36,14 @@ class _RegisterPageState extends State<RegisterPage> {
       Navigator.pushReplacementNamed(context, '/login');
     }
   }
+
+  @override
+    void initState() {
+      super.initState();
+      setState(() {
+        user = null; 
+      });
+    }
 
   @override
 Widget build(BuildContext context) {

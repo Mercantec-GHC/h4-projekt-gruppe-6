@@ -14,30 +14,39 @@ namespace API.Application.Users.Commands
             _repository = repository;
         }
 
-        public async Task<IActionResult> Handle(UpdateUserDTO UpdateUserDTO)
+        public async Task<IActionResult> Handle(UpdateUserDTO updateUserDTO)
         {
             List<User> existingUsers = await _repository.QueryAllUsersAsync();
-            User currentUser = await _repository.QueryUserByIdAsync(UpdateUserDTO.Id);
+            User currentUser = await _repository.QueryUserByIdAsync(updateUserDTO.Id);
 
             foreach (User existingUser in existingUsers)
             {
-                if (existingUser.Username == UpdateUserDTO.Username && existingUser.Username != currentUser.Username)
+                if (existingUser.Username == updateUserDTO.Username && existingUser.Username != currentUser.Username)
                 {
                     return new ConflictObjectResult(new { message = "Username is already in use." });
                 }
 
-                if (existingUser.Email == UpdateUserDTO.Email && existingUser.Email != currentUser.Email)
+                if (existingUser.Email == updateUserDTO.Email && existingUser.Email != currentUser.Email)
                 {
                     return new ConflictObjectResult(new { message = "Email is already in use." });
                 }
             }
+            if (updateUserDTO.Password != "")
+            {
+                if (IsPasswordSecure(updateUserDTO.Password))
+                {
+                    string hashedPassword = BCrypt.Net.BCrypt.HashPassword(updateUserDTO.Password);
+                    currentUser.HashedPassword = hashedPassword;
+                }
+            }
+            if (updateUserDTO.Username != "")
+                currentUser.Username = updateUserDTO.Username;
+            if (updateUserDTO.Email != "")
+                currentUser.Email = updateUserDTO.Email;
 
-            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(UpdateUserDTO.Password);
 
 
-            currentUser.Username = UpdateUserDTO.Username;
-            currentUser.Email = UpdateUserDTO.Email;
-            currentUser.HashedPassword = hashedPassword;
+
 
             bool success = await _repository.UpdateUserAsync(currentUser);
             if (success)

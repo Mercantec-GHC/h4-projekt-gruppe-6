@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:mobile/base/variables.dart';
 import 'package:mobile/models.dart';
@@ -25,15 +24,6 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> getProfile() async {
-    if (!await api.isLoggedIn(context)) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please log in to view this page')));
-        Navigator.pushReplacementNamed(context, '/login');
-      });
-
-      return;
-    }
-
     if (user != null) {
       setState(() {
         userData = user!;

@@ -89,6 +89,8 @@ class _SideMenuState extends State<SideMenu> {
                 Navigator.pushReplacementNamed(context, '/home');
               },
             ),
+            ...(_isLoggedIn
+              ? [
             ListTile(
               title: const Text('Favorites'),
               leading: const Icon(Icons.star),
@@ -110,8 +112,7 @@ class _SideMenuState extends State<SideMenu> {
               thickness: 2,
               indent: 40,
             ),
-            ...(_isLoggedIn
-              ? [
+            
                   ListTile(
                     title: const Text('Log out'),
                     leading: const Icon(Icons.logout),

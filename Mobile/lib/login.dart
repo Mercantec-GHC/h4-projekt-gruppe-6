@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/base/sidemenu.dart';
-import 'package:mobile/base/variables.dart';
 import 'package:mobile/models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
 import 'api.dart' as api;
+import 'base/variables.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -39,6 +39,14 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pushReplacementNamed(context, '/home');
     }
   }
+
+    @override
+    void initState() {
+      super.initState();
+      setState(() {
+        user = null; 
+      });
+    }
 
   @override
   Widget build(BuildContext context) {
