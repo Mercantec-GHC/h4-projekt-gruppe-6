@@ -135,7 +135,7 @@ KC - Kundechef
 
 ## Tirsdag
 
-**SM(Alexander):**
+**SM(Alexander):** Var til tandlæge
 
 **PO(Reimar):**
 
