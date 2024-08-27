@@ -9,6 +9,7 @@ import 'base/sidemenu.dart';
 import 'profile.dart';
 import 'api.dart' as api;
 import 'models.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -49,8 +50,58 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Favorite> _favorites = [];
   LatLng? _selectedPoint;
 
-  void _showLocation(TapPosition _, LatLng point) {
+  void _showLocation(TapPosition _, LatLng point) async {
     setState(() => _selectedPoint = point);
+
+    final location;
+    try {
+      final response = await http.get(
+        Uri.parse('https://nominatim.openstreetmap.org/reverse.php?lat=${point.latitude}&lon=${point.longitude}&zoom=18&format=jsonv2'),
+        headers: {'User-Agent': 'SkanTravels/1.0'},
+      );
+
+      location = jsonDecode(response.body);
+    } catch (_) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Unable to fetch information about this location')));
+
+      setState(() => _selectedPoint = null);
+
+      return;
+    }
+
+    if (!mounted) return;
+
+    await showModalBottomSheet(
+      barrierColor: Colors.black.withOpacity(0.3),
+      context: context,
+      builder: (builder) {
+        return Wrap(children: [
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.all(20),
+            width: MediaQuery.of(context).size.width,
+            child: Row(children: [
+              Expanded(child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(location['name'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
+                  const SizedBox(height: 10),
+                  Text(location['display_name']),
+                ],
+              )),
+              const Column(children: [
+                IconButton(icon: Icon(Icons.star), iconSize: 32, onPressed: null),
+                IconButton(icon: Icon(Icons.rate_review), iconSize: 32, onPressed: null),
+              ]),
+            ]),
+          ),
+        ]);
+      },
+    );
+
+    setState(() => _selectedPoint = null);
   }
 
   @override
