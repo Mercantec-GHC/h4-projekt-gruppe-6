@@ -33,10 +33,6 @@ class _LoginPageState extends State<LoginPage> {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('token', jsonUser.token);
     prefs.setString('id', jsonUser.id);
- 
-    setState(() {
-      loggedIn == true;
-    });
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Successfully logged in')));

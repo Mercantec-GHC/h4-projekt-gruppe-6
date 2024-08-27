@@ -25,13 +25,12 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> getProfile() async {
-    if (!loggedIn) {
+    if (!await api.isLoggedIn(context)) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please log in')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please log in to view this page')));
         Navigator.pushReplacementNamed(context, '/login');
       });
+
       return;
     }
 

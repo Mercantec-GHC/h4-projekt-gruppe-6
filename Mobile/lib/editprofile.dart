@@ -47,37 +47,41 @@ class _ProfilePageState extends State<EditProfilePage> {
           const SnackBar(content: Text('Passwords do not match')));
       return;
     }
-      final prefs = await SharedPreferences.getInstance();
-      String? id = prefs.getString('id');
 
-      final response = await api
-        .request(context, api.ApiService.auth, 'PUT', '/api/users', {
+    final prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString('id');
+
+    if (!mounted) {
+      return;
+    }
+
+    final response = await api.request(context, api.ApiService.auth, 'PUT', '/api/users', {
       'id' : id,
       'username': usernameInput.text,
       'email': emailInput.text,
       'password': passwordInput.text,
     });
 
-          useMAN.log('data');
+    if (!mounted) {
+      return;
+    }
 
+    useMAN.log('data');
 
-      if (response!.isEmpty) {
-        prefs.remove('token');
-          loggedIn = true;
-          user = User(
-            id!,
-            emailInput.text,
-            usernameInput.text,
-            DateTime.now(),
-          );
-        Navigator.of(context).pop(); // Close the dialog
+    if (response != null) {
+      user = User(
+        id!,
+        emailInput.text,
+        usernameInput.text,
+        DateTime.now(),
+      );
 
-      }
-      else{
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Something went wrong! Please contact an admin.')),
-        );
-      }
+      Navigator.of(context).pop(); // Close the dialog
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Something went wrong! Please contact an admin.')),
+      );
+    }
   }
 
   void _deleteProfile(BuildContext context) {
@@ -101,21 +105,21 @@ class _ProfilePageState extends State<EditProfilePage> {
                 final prefs = await SharedPreferences.getInstance();
                 String? id = prefs.getString('id');
 
-                final response = await api
-                  .request(context, api.ApiService.auth, 'DELETE', '/api/users/$id', null);
+                final response = await api.request(context, api.ApiService.auth, 'DELETE', '/api/users/$id', null);
                 
-                if (response!.isEmpty) {
+                if (response != null) {
                   prefs.remove('token');
-                prefs.remove('id');
-                setState(() {
-                  loggedIn = false;
-                  user = null;
+                  prefs.remove('id');
+
+                  setState(() {
+                    user = null;
                   });
-                Navigator.of(context).pop(); // Close the dialog
-                Navigator.of(context).pop();
-                Navigator.pushReplacementNamed(context, '/register');
-                }
-                else{
+
+                  Navigator.of(context).pop(); // Close the dialog
+                  Navigator.of(context).pop();
+
+                  Navigator.pushReplacementNamed(context, '/register');
+                } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Something went wrong! Please contact an admin.')),
                   );
@@ -130,7 +134,7 @@ class _ProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-     return Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: Text('Edit Profile'),
         leading: IconButton(

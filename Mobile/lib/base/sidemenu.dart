@@ -16,6 +16,7 @@ class SideMenu extends StatefulWidget {
 
 class _SideMenuState extends State<SideMenu> {
   late int _selectedIndex;
+  bool _isLoggedIn = false;
 
  @override
   void initState() {
@@ -30,7 +31,6 @@ class _SideMenuState extends State<SideMenu> {
     prefs.remove('id');
 
     setState(() {
-      loggedIn = false;
       user = null;
     });
 
@@ -46,7 +46,7 @@ class _SideMenuState extends State<SideMenu> {
 
     api.isLoggedIn(context).then((value) {
       setState(() {
-        loggedIn = value; // Update the second variable here
+        _isLoggedIn = value;
       });
     });
   }
@@ -110,7 +110,7 @@ class _SideMenuState extends State<SideMenu> {
               thickness: 2,
               indent: 40,
             ),
-            ...(loggedIn
+            ...(_isLoggedIn
               ? [
                   ListTile(
                     title: const Text('Log out'),
