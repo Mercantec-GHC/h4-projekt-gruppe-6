@@ -7,6 +7,17 @@ class Favorite {
   String description;
 
   Favorite(this.id, this.userId, this.lat, this.lng, this.name, this.description);
+
+  factory Favorite.fromJson(Map<String, dynamic> json) {
+    return Favorite(
+      json['id'],
+      json['user_id'],
+      json['lat'],
+      json['lng'],
+      json['name'],
+      json['description'],
+    );
+  }
 }
 
 class Login {

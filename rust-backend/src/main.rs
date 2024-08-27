@@ -56,26 +56,13 @@ fn get_favorites(db: MutexGuard<'_, rusqlite::Connection>, user_id: String) -> O
 struct CreateFavoriteRequest {
     lat: f64,
     lng: f64,
-}
-
-#[derive(Deserialize, Debug)]
-struct ReverseLookupResponse {
     name: String,
-    display_name: String,
+    description: String,
 }
 
 #[post("/favorites")]
 async fn create_favorite(auth: AuthorizedUser, data: web::Data<AppData>, input: web::Json<CreateFavoriteRequest>) -> impl Responder {
     let db = data.database.lock().unwrap();
-
-    let Ok(response) = reqwest::Client::new()
-        .get(format!("https://nominatim.openstreetmap.org/reverse.php?lat={}&lon={}&zoom=18&format=jsonv2", input.lat, input.lng))
-        .header("User-Agent", "SkanTravels/1.0")
-        .send().await
-        else { return HttpResponse::InternalServerError(); };
-
-    let Ok(response) = response.json::<ReverseLookupResponse>().await
-        else { return HttpResponse::InternalServerError(); };
 
     match db.execute(
         "INSERT INTO favorites (user_id, lat, lng, name, description) VALUES (:user_id, :lat, :lng, :name, :description)",
@@ -83,12 +70,19 @@ async fn create_favorite(auth: AuthorizedUser, data: web::Data<AppData>, input: 
             (":user_id", &auth.user_id),
             (":lat", &input.lat.to_string()),
             (":lng", &input.lng.to_string()),
-            (":name", &response.name),
-            (":description", &response.display_name),
+            (":name", &input.name),
+            (":description", &input.description),
         ],
     ) {
-        Ok(_) => HttpResponse::Created(),
-        Err(_) => HttpResponse::InternalServerError(),
+        Ok(_) => HttpResponse::Created().json(Favorite {
+            id: db.last_insert_rowid(),
+            user_id: auth.user_id,
+            lat: input.lat,
+            lng: input.lng,
+            name: input.name.clone(),
+            description: input.description.clone(),
+        }),
+        Err(_) => HttpResponse::InternalServerError().finish(),
     }
 }
 

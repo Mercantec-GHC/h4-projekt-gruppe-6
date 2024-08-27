@@ -57,7 +57,7 @@ Future<String?> request(BuildContext context, ApiService service, String method,
     return null;
   }
 
-  return response.body;
+  return utf8.decode(response.bodyBytes);
 }
 
 Future<bool> isLoggedIn(BuildContext context) async {
