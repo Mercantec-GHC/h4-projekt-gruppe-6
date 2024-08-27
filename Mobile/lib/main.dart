@@ -47,13 +47,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _locationScaffoldKey = GlobalKey<ScaffoldState>();
   List<Favorite> _favorites = [];
   LatLng? _selectedPoint;
 
   void _showLocation(TapPosition _, LatLng point) async {
     setState(() => _selectedPoint = point);
 
-    final location;
+    final dynamic location;
     try {
       final response = await http.get(
         Uri.parse('https://nominatim.openstreetmap.org/reverse.php?lat=${point.latitude}&lon=${point.longitude}&zoom=18&format=jsonv2'),
@@ -77,47 +78,94 @@ class _MyHomePageState extends State<MyHomePage> {
       barrierColor: Colors.black.withOpacity(0.3),
       context: context,
       builder: (builder) {
-        return Wrap(children: [
-          Container(
-            color: Colors.white,
-            padding: const EdgeInsets.all(20),
-            width: MediaQuery.of(context).size.width,
-            child: Row(children: [
-              Expanded(child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(location['name'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
-                  const SizedBox(height: 10),
-                  Text(location['display_name']),
-                ],
-              )),
-              const Column(children: [
-                IconButton(icon: Icon(Icons.star), iconSize: 32, onPressed: null),
-                IconButton(icon: Icon(Icons.rate_review), iconSize: 32, onPressed: null),
+        return StatefulBuilder(builder: (BuildContext context, StateSetter setModalState) {
+          return Wrap(children: [
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.all(20),
+              width: MediaQuery.of(context).size.width,
+              child: Row(children: [
+                Expanded(child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(location['name'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
+                    const SizedBox(height: 10),
+                    Text(location['display_name']),
+                  ],
+                )),
+                Column(children: [
+                  IconButton(
+                    icon: const Icon(Icons.star),
+                    iconSize: 32,
+                    color: _favorites.where((fav) => fav.lat == point.latitude && fav.lng == point.longitude).isEmpty ? Colors.grey : Colors.yellow,
+                    onPressed: () => _toggleFavorite(point, location['name'], location['display_name'], setModalState, context)
+                  ),
+                  const IconButton(icon: Icon(Icons.rate_review), iconSize: 32, onPressed: null),
+                ]),
               ]),
-            ]),
-          ),
-        ]);
+            ),
+          ]);
+        });
       },
     );
 
     setState(() => _selectedPoint = null);
   }
 
+  void _toggleFavorite(LatLng point, String name, String description, StateSetter setModalState, BuildContext context) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final favorite = _favorites.where((fav) => fav.lat == point.latitude && fav.lng == point.longitude).firstOrNull;
+
+    if (!await api.isLoggedIn(context)) {
+      messenger.showSnackBar(const SnackBar(content: Text('You need to login to do that')));
+      return;
+    }
+
+    if (!context.mounted) return;
+
+    if (favorite == null) {
+      if (await api.request(context, api.ApiService.app, 'POST', '/favorites', {'lat': point.latitude, 'lng': point.longitude}) == null) {
+        return;
+      }
+
+      _fetchFavorites();
+      setModalState(() {});
+
+      messenger.showSnackBar(const SnackBar(content: Text('Added to favorites')));
+
+      return;
+    }
+
+    if (await api.request(context, api.ApiService.app, 'DELETE', '/favorites/${favorite.id}', null) == null) {
+      return;
+    }
+
+    setState(() {
+      _favorites = _favorites.where((fav) => fav.id != favorite.id).toList();
+    });
+    setModalState(() {});
+
+    messenger.showSnackBar(const SnackBar(content: Text('Removed from favorites')));
+  }
+
+  void _fetchFavorites() async {
+    final response = await api.request(context, api.ApiService.app, 'GET', '/favorites', null);
+    if (response == null) return;
+
+    final List<dynamic> favorites = jsonDecode(response);
+    setState(() {
+      _favorites = favorites.map((favorite) => Favorite(favorite['id'], favorite['user_id'], favorite['lat'], favorite['lng'], favorite['name'], favorite['description'])).toList();
+    });
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    api.isLoggedIn(context).then((isLoggedIn) async {
+    api.isLoggedIn(context).then((isLoggedIn) {
       if (!isLoggedIn || !mounted) return;
 
-      final response = await api.request(context, api.ApiService.app, 'GET', '/favorites', null);
-      if (response == null) return;
-
-      final List<dynamic> favorites = jsonDecode(response);
-      setState(() {
-        _favorites = favorites.map((favorite) => Favorite(favorite['id'], favorite['user_id'], favorite['lat'], favorite['lng'], favorite['name'], favorite['description'])).toList();
-      });
+      _fetchFavorites();
     });
   }
 
@@ -136,6 +184,24 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           children: [
             openStreetMapTileLayer,
+            ...(
+                _selectedPoint != null ? [
+                  MarkerLayer(markers: [
+                    Marker(
+                      point: _selectedPoint!,
+                      width: 30,
+                      height: 50,
+                      alignment: Alignment.center,
+                      child: const Stack(
+                          children: [
+                            Icon(Icons.location_pin, size: 30, color: Colors.red),
+                            Icon(Icons.location_on_outlined, size: 30, color: Colors.black),
+                          ]
+                      ),
+                    )
+                  ]),
+                ] : []
+            ),
             ..._favorites.map((favorite) =>
               MarkerLayer(markers: [
                 Marker(
@@ -151,24 +217,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 )
               ]),
-            ),
-            ...(
-              _selectedPoint != null ? [
-                MarkerLayer(markers: [
-                  Marker(
-                    point: _selectedPoint!,
-                    width: 30,
-                    height: 50,
-                    alignment: Alignment.center,
-                    child: const Stack(
-                      children: [
-                        Icon(Icons.location_pin, size: 30, color: Colors.red),
-                        Icon(Icons.location_on_outlined, size: 30, color: Colors.black),
-                      ]
-                    ),
-                  )
-                ]),
-              ] : []
             ),
           ],
         ),
