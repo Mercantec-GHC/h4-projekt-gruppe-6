@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Favorite> _favorites = [];
   LatLng? _selectedPoint;
 
-  void _showLocation(TapPosition _, LatLng point) async {
+  void _onTap(TapPosition _, LatLng point) async {
     setState(() => _selectedPoint = point);
 
     final dynamic location;
@@ -59,6 +59,11 @@ class _MyHomePageState extends State<MyHomePage> {
         Uri.parse('https://nominatim.openstreetmap.org/reverse.php?lat=${point.latitude}&lon=${point.longitude}&zoom=18&format=jsonv2'),
         headers: {'User-Agent': 'SkanTravels/1.0'},
       );
+
+      if (mounted && response.statusCode != 200) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Unable to fetch information about this location (HTTP ${response.statusCode})')));
+        return;
+      }
 
       location = jsonDecode(response.body);
     } catch (_) {
@@ -73,6 +78,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (!mounted) return;
 
+    if (location['name'] != null && location['display_name'] != null) {
+      await _showLocation(point, location['name'], location['display_name']);
+    }
+
+    setState(() => _selectedPoint = null);
+  }
+
+  Future<void> _showLocation(LatLng point, String name, String description) async {
     await showModalBottomSheet(
       barrierColor: Colors.black.withOpacity(0.3),
       context: context,
@@ -87,17 +100,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(location['name'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
+                    Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
                     const SizedBox(height: 10),
-                    Text(location['display_name']),
+                    Text(description),
                   ],
                 )),
                 Column(children: [
                   IconButton(
-                    icon: const Icon(Icons.star),
-                    iconSize: 32,
-                    color: _favorites.where((fav) => fav.lat == point.latitude && fav.lng == point.longitude).isEmpty ? Colors.grey : Colors.yellow,
-                    onPressed: () => _toggleFavorite(point, location['name'], location['display_name'], setModalState, context)
+                      icon: const Icon(Icons.star),
+                      iconSize: 32,
+                      color: _favorites.where((fav) => fav.lat == point.latitude && fav.lng == point.longitude).isEmpty ? Colors.grey : Colors.yellow,
+                      onPressed: () => _toggleFavorite(point, name, description, setModalState, context)
                   ),
                   const IconButton(icon: Icon(Icons.rate_review), iconSize: 32, onPressed: null),
                 ]),
@@ -107,8 +120,6 @@ class _MyHomePageState extends State<MyHomePage> {
         });
       },
     );
-
-    setState(() => _selectedPoint = null);
   }
 
   void _toggleFavorite(LatLng point, String name, String description, StateSetter setModalState, BuildContext context) async {
@@ -130,7 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
         return;
       }
 
-      _fetchFavorites();
+      await _fetchFavorites();
       setModalState(() {});
 
       return;
@@ -147,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setModalState(() {});
   }
 
-  void _fetchFavorites() async {
+  Future<void> _fetchFavorites() async {
     final response = await api.request(context, api.ApiService.app, 'GET', '/favorites', null);
     if (response == null) return;
 
@@ -179,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
           options: MapOptions(
             initialCenter: const LatLng(55.9397, 9.5156),
             initialZoom: 7.0,
-            onTap: _showLocation,
+            onTap: _onTap,
           ),
           children: [
             openStreetMapTileLayer,
@@ -205,10 +216,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   width: 30,
                   height: 50,
                   alignment: Alignment.center,
-                  child: const Stack(
+                  child: Stack(
                     children: [
-                      Icon(Icons.location_pin, size: 30, color: Colors.yellow),
-                      Icon(Icons.location_on_outlined, size: 30, color: Colors.black),
+                      IconButton(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        icon: const Icon(Icons.location_pin, size: 30, color: Colors.yellow),
+                        onPressed: () => _showLocation(LatLng(favorite.lat, favorite.lng), favorite.name, favorite.description),
+                      ),
+                      IconButton(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          icon: const Icon(Icons.location_on_outlined, size: 30, color: Colors.black),
+                          onPressed: () => _showLocation(LatLng(favorite.lat, favorite.lng), favorite.name, favorite.description),
+                      ),
                     ]
                   ),
                 )
