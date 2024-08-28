@@ -110,7 +110,7 @@ KC - Kundechef
 
 **KC(Alexander):** Blev tæsket igennem VIM og arbejdede med Reimar på Favorites-featuren, inklusiv Rust server og database migration
 
-**SM(Reimar):**
+**SM(Reimar):** Tilføjet at favoritter bliver vist på map
 
 **PO(Philip):** færdig med side-menu som funger på alle sider.
 
@@ -118,7 +118,7 @@ KC - Kundechef
 
 **KC(Alexander):** Afholdte møde med vores udviklergruppe, De planlægger at lave core gameplay features i uge 35
 
-**SM(Reimar):** 
+**SM(Reimar):** Begyndt på implementation af name/description på favorites
 
 **PO(Philip):** Havde møde med Freja. De bad om at når man opdaterer en brugers info. så skal man kunne opdatere det hele. Før havde vi snakket oma at opdatere password for sig selv. og alt andet for sig selv
 
@@ -129,7 +129,7 @@ KC - Kundechef
 
 **SM(Alexander):** Satte SCRUM møder op for denne og følgende uger. Var ellers syg.
 
-**PO(Reimar):**
+**PO(Reimar):** Færdiggjort implementation af name/description på favorites, lavet bottom sheet når man klikker på en lokation, ændret udseendet på location pins
 
 **KC(Philip):*Ingen kontakt fra programmeringsgruppen. Behøves heller ikke på nuværende tidspunkt*
 
@@ -137,7 +137,7 @@ KC - Kundechef
 
 **SM(Alexander):** Var til tandlæge
 
-**PO(Reimar):**
+**PO(Reimar):** Implementeret favorit-knap på location info bottom sheet, optimeret API requests
 
 **KC(Philip):**
 
@@ -145,7 +145,7 @@ KC - Kundechef
 
 **SM(Alexander):**
 
-**PO(Reimar):**
+**PO(Reimar):** Downloaded turist-guides for alle byer i Danmark
 
 **KC(Philip):**
 
