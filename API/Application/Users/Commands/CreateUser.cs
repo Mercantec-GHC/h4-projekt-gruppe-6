@@ -16,6 +16,11 @@ namespace API.Application.Users.Commands
 
         public async Task<ActionResult<Guid>> Handle(SignUpDTO signUpDTO)
         {
+            if (!new Regex(@".+@.+\..+").IsMatch(signUpDTO.Email))
+            {
+                return new ConflictObjectResult(new{message = "Invalid email address."});
+            }
+
             List<User> existingUsers = await _repository.QueryAllUsersAsync();
 
             foreach (User existingUser in existingUsers)
