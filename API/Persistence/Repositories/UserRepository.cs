@@ -7,6 +7,7 @@ namespace API.Persistence.Repositories
     public class UserRepository(AppDBContext context) : IUserRepository
     {
         private readonly AppDBContext _context = context;
+
         public async Task<List<User>> QueryAllUsersAsync()
         {
             return await _context.Users.ToListAsync();
@@ -16,14 +17,12 @@ namespace API.Persistence.Repositories
         {
             try
             {
-                return await _context.Users
-                .FirstOrDefaultAsync(user => user.Id == id);
+                return await _context.Users.FirstOrDefaultAsync(user => user.Id == id);
             }
             catch (Exception)
             {
                 return new User();
             }
-
         }
 
         public async Task<string> CreateUserAsync(User user)
@@ -73,7 +72,11 @@ namespace API.Persistence.Repositories
         public async Task<User> QueryUserByEmailAsync(string email)
         {
             return await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
-            
+        }
+
+        public async Task<User> QueryUserByRefreshTokenAsync(string refreshToken)
+        {
+            return await _context.Users.SingleOrDefaultAsync(u => u.RefreshToken == refreshToken);
         }
     }
 }

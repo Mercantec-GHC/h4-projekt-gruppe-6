@@ -34,7 +34,7 @@ namespace API.Application.Users.Commands
             }
             var jwtToken = _tokenHelper.GenerateJwtToken(user);
 
-            return new OkObjectResult(new { token = jwtToken, id = user.Id});
+            return new OkObjectResult(new { token = jwtToken, id = user.Id, refreshToken = user.RefreshToken});
 
         }
     }

@@ -87,14 +87,12 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteUser(string id)
         {
             return await _deleteUser.Handle(id);
-        }
-
-        [Authorize]
+        } 
+        
         [HttpPost("/RefreshToken")]
-        public async Task<IActionResult> RefreshToken()
+        public async Task<IActionResult> RefreshToken(RefreshTokenDTO refreshTokenDTO)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _repository.QueryUserByIdAsync(userId);
+            User user = await _repository.QueryUserByRefreshTokenAsync(refreshTokenDTO.RefreshToken);
             return new OkObjectResult(_tokenHelper.GenerateJwtToken(user));
         }
         

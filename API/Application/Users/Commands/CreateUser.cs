@@ -82,6 +82,8 @@ namespace API.Application.Users.Commands
                 CreatedAt = DateTime.UtcNow.AddHours(2),
                 UpdatedAt = DateTime.UtcNow.AddHours(2),
                 HashedPassword = hashedPassword,
+                RefreshToken = System.Guid.NewGuid().ToString(),
+                RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(7),
             };
         }
     }
