@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -8,8 +9,8 @@ import 'package:mobile/register.dart';
 import 'login.dart';
 import 'base/sidemenu.dart';
 import 'profile.dart';
-import 'api.dart' as api;
 import 'models.dart';
+import 'api.dart' as api;
 import 'package:http/http.dart' as http;
 
 void main() {
@@ -51,6 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Favorite> _favorites = [];
   LatLng? _selectedPoint;
   double _zoom = 7.0;
+  final TextEditingController searchBarInput =TextEditingController(text: '');
 
   void _onTap(TapPosition _, LatLng point) async {
     setState(() => _selectedPoint = point);
@@ -189,60 +191,128 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  @override
+  Future<void> GetOpenStreetMapArea() async {
+  final dynamic location;
+  LatLng point;
+
+  if (searchBarInput.text != '') {
+    final response = await http.get(
+      Uri.parse('https://nominatim.openstreetmap.org/search.php?q=${searchBarInput.text}&format=jsonv2'),
+      headers: {'User-Agent': 'SkanTravels/1.0'},
+    );
+
+    location = jsonDecode(response.body);
+
+    if (location is List && location.isNotEmpty) {
+      final firstResult = location[0];  // Pick the first entry
+
+      if (firstResult['lat'] != null && firstResult['lon'] != null && firstResult['name'] != null && firstResult['display_name'] != null) {
+        double lat = double.parse(firstResult['lat']);
+        double lon = double.parse(firstResult['lon']);
+        point = LatLng(lat, lon);
+        setState(() => _selectedPoint = point);
+        await _showLocation(point, firstResult['name'], firstResult['display_name']);
+      }
+    }
+  }
+}
+
+   @override
+  void dispose() {
+    searchBarInput.dispose();
+    super.dispose();
+  }
+
+ @override
   Widget build(BuildContext context) {
     return SideMenu(
       selectedIndex: 0,
       body: Scaffold(
         key: _scaffoldKey,
-        //drawer: navigationMenu,
-        body: FlutterMap(
-          options: MapOptions(
-            initialCenter: const LatLng(55.9397, 9.5156),
-            initialZoom: _zoom,
-            onTap: _onTap,
-            onPositionChanged: (pos, _) => _zoom = pos.zoom,
-          ),
+        body: Stack(
           children: [
-            openStreetMapTileLayer,
-            if (_selectedPoint != null)
-              MarkerLayer(markers: [
-                Marker(
-                  point: _selectedPoint!,
-                  width: 30,
-                  height: 50,
-                  alignment: Alignment.center,
-                  child: const Stack(
-                      children: [
-                        Icon(Icons.location_pin, size: 30, color: Colors.red),
-                        Icon(Icons.location_on_outlined, size: 30, color: Colors.black),
-                      ]
-                  ),
-                )
-              ]),
-            ..._favorites.map((favorite) =>
-              MarkerLayer(markers: [
-                Marker(
-                  point: LatLng(favorite.lat, favorite.lng),
-                  width: 30,
-                  height: 50,
-                  alignment: Alignment.center,
+            FlutterMap(
+              options: MapOptions(
+                initialCenter: const LatLng(55.9397, 9.5156),
+                initialZoom: _zoom,
+                onTap: _onTap,
+                onPositionChanged: (pos, _) => _zoom = pos.zoom,
+              ),
+              children: [
+                openStreetMapTileLayer,
+                if (_selectedPoint != null)
+                  MarkerLayer(markers: [
+                    Marker(
+                      point: _selectedPoint!,
+                      width: 30,
+                      height: 50,
+                      alignment: Alignment.center,
+                      child: const Stack(
+                        children: [
+                          Icon(Icons.location_pin, size: 30, color: Colors.red),
+                          Icon(Icons.location_on_outlined, size: 30, color: Colors.black),
+                        ],
+                      ),
+                    )
+                  ]),
+                ..._favorites.map((favorite) => MarkerLayer(
+                      markers: [
+                        Marker(
+                          point: LatLng(favorite.lat, favorite.lng),
+                          width: 30,
+                          height: 50,
+                          alignment: Alignment.center,
+                          child: Stack(
+                            children: [
+                              IconButton(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                icon: const Icon(Icons.location_pin, size: 30, color: Colors.yellow),
+                                onPressed: () => _showLocation(LatLng(favorite.lat, favorite.lng), favorite.name, favorite.description),
+                              ),
+                              IconButton(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                icon: const Icon(Icons.location_on_outlined, size: 30, color: Colors.black),
+                                onPressed: () => _showLocation(LatLng(favorite.lat, favorite.lng), favorite.name, favorite.description),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    )),
+              ],
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Stack(
                     children: [
-                      IconButton(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        icon: const Icon(Icons.location_pin, size: 30, color: Colors.yellow),
-                        onPressed: () => _showLocation(LatLng(favorite.lat, favorite.lng), favorite.name, favorite.description),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CupertinoSearchTextField(
+                              controller: searchBarInput,
+                              suffixMode: OverlayVisibilityMode.never,
+                              backgroundColor: Colors.white.withOpacity(0.9),
+                            ),
+                          ),
+                        ],
                       ),
-                      IconButton(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          icon: const Icon(Icons.location_on_outlined, size: 30, color: Colors.black),
-                          onPressed: () => _showLocation(LatLng(favorite.lat, favorite.lng), favorite.name, favorite.description),
+                      Positioned(
+                        right: 2, // Position the button at the bottom-right
+                        bottom: 4.5,
+                        child: ElevatedButton(
+                          onPressed: GetOpenStreetMapArea,
+                          child: const Text('Search'),
+                        ),
                       ),
-                    ]
+                    ],
                   ),
-                )
-              ]),
+                ),
+              ),
             ),
           ],
         ),
@@ -251,7 +321,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   TileLayer get openStreetMapTileLayer => TileLayer(
-    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-    userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-  );
+        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+      );
 }
