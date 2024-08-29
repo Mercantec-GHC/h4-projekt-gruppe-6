@@ -5,7 +5,7 @@ dotnet publish -r linux-arm64 -p:PublishSingleFile=true --self-contained false
 dotnet ef migrations bundle -r linux-arm64 --force
 
 cd ../rust-backend
-cargo build --release --target=aarch64-unknown-linux-gnu
+OPENSSL_DIR=/usr/aarch64-linux-gnu/usr cargo build --release --target=aarch64-unknown-linux-gnu
 
 cd ..
 rsync -va \
