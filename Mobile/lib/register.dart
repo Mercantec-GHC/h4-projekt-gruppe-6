@@ -53,7 +53,8 @@ Widget build(BuildContext context) {
       body: SingleChildScrollView(
         child: Center(
           child: Container(
-            constraints: const BoxConstraints(minWidth: 100, maxWidth: 400),
+            padding: const EdgeInsets.all(40),
+            constraints: const BoxConstraints(maxWidth: 400),
             child: Column(
               children: [
                 const Image(
@@ -64,7 +65,7 @@ Widget build(BuildContext context) {
                   'SkanTravels',
                   style: GoogleFonts.jacquesFrancois(
                     fontSize: 30,
-                    color: Color(0xFF1862E7),
+                    color: const Color(0xFF1862E7),
                   ),
                 ),
                 const SizedBox(height: 40),

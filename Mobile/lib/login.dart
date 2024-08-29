@@ -56,7 +56,8 @@ class _LoginPageState extends State<LoginPage> {
         body: SingleChildScrollView(
           child: Center(
             child: Container(
-              constraints: const BoxConstraints(minWidth: 100, maxWidth: 400),
+              padding: const EdgeInsets.all(40),
+              constraints: const BoxConstraints(maxWidth: 400),
               child: Column(children: [
                 const Image(image: AssetImage('assets/logo.png'), height: 200),
                 Text(
