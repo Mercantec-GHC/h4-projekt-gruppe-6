@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using Helpers;
 
 namespace API
 {
@@ -31,6 +32,8 @@ namespace API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddSingleton<TokenHelper>();
 
             builder.Services.AddScoped<QueryAllUsers>();
             builder.Services.AddScoped<QueryUserById>();

@@ -9,6 +9,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
+using Helpers;
+using Microsoft.AspNetCore.Identity;
+using API.Persistence.Repositories;
 
 namespace API.Controllers
 {
@@ -22,6 +25,8 @@ namespace API.Controllers
         private readonly UpdateUser _updateUser;
         private readonly DeleteUser _deleteUser;
         private readonly LoginUser _loginUser;
+        private readonly TokenHelper _tokenHelper;
+        private readonly IUserRepository _repository;
 
         public UsersController(
             QueryAllUsers queryAllUsers,
@@ -29,7 +34,9 @@ namespace API.Controllers
             CreateUser createUser,
             UpdateUser updateUser,
             DeleteUser deleteUser,
-            LoginUser loginUser)
+            LoginUser loginUser,
+            TokenHelper tokenHelper,
+            IUserRepository repository)
         {
             _queryAllUsers = queryAllUsers;
             _queryUserById = queryUserById;
@@ -37,6 +44,8 @@ namespace API.Controllers
             _updateUser = updateUser;
             _deleteUser = deleteUser;
             _loginUser = loginUser;
+            _tokenHelper = tokenHelper;
+            _repository = repository;
         }
 
         [HttpPost("login")]
@@ -79,5 +88,15 @@ namespace API.Controllers
         {
             return await _deleteUser.Handle(id);
         }
+
+        [Authorize]
+        [HttpPost("/RefreshToken")]
+        public async Task<IActionResult> RefreshToken()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _repository.QueryUserByIdAsync(userId);
+            return new OkObjectResult(_tokenHelper.GenerateJwtToken(user));
+        }
+        
     }
 }
