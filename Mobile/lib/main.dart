@@ -10,6 +10,7 @@ import 'login.dart';
 import 'base/sidemenu.dart';
 import 'profile.dart';
 import 'models.dart';
+import 'package:geolocator/geolocator.dart';
 import 'api.dart' as api;
 import 'package:http/http.dart' as http;
 
@@ -51,8 +52,13 @@ class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   List<Favorite> _favorites = [];
   LatLng? _selectedPoint;
+  LatLng _currentPosition = LatLng(55.9397, 9.5156);
   double _zoom = 7.0;
   final TextEditingController searchBarInput =TextEditingController(text: '');
+  final LocationSettings locationSettings = const LocationSettings(
+    accuracy: LocationAccuracy.high,
+    distanceFilter: 100,
+  );
 
   void _onTap(TapPosition _, LatLng point) async {
     setState(() => _selectedPoint = point);
@@ -223,6 +229,22 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
+@override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();  // Call the async method inside initState
+  }
+
+ Future<void> _getCurrentLocation() async {
+    await Geolocator.checkPermission();
+    await Geolocator.requestPermission();
+    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+    setState(() {
+      _currentPosition = LatLng(position.latitude, position.longitude);
+      _zoom = 5.0;
+    });
+  }
+
  @override
   Widget build(BuildContext context) {
     return SideMenu(
@@ -233,15 +255,15 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             FlutterMap(
               options: MapOptions(
-                initialCenter: const LatLng(55.9397, 9.5156),
+                initialCenter: _currentPosition,
                 initialZoom: _zoom,
                 onTap: _onTap,
                 onPositionChanged: (pos, _) => _zoom = pos.zoom,
               ),
               children: [
                 openStreetMapTileLayer,
-                if (_selectedPoint != null)
                   MarkerLayer(markers: [
+                    if (_selectedPoint != null)
                     Marker(
                       point: _selectedPoint!,
                       width: 30,
@@ -253,7 +275,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           Icon(Icons.location_on_outlined, size: 30, color: Colors.black),
                         ],
                       ),
-                    )
+                    ),
+                    Marker(
+                      point: _currentPosition,
+                      width: 20,
+                      height: 20,
+                      alignment: Alignment.center,
+                      child: const Icon(Icons.circle_sharp, size: 15, color: Colors.blueAccent),
+                      ),
                   ]),
                 ..._favorites.map((favorite) => MarkerLayer(
                       markers: [
@@ -301,12 +330,17 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ],
                       ),
-                      Positioned(
-                        right: 2, // Position the button at the bottom-right
-                        bottom: 4.5,
-                        child: ElevatedButton(
-                          onPressed: GetOpenStreetMapArea,
-                          child: const Text('Search'),
+                        Positioned(
+                          right: 2, // Position the button at the bottom-right
+                          bottom: 4.5,
+                          child: 
+                          SizedBox( 
+                            width: 100,
+                            height: 28,
+                            child: ElevatedButton(
+                                onPressed: GetOpenStreetMapArea,
+                                child: const Text('Search'),
+                              ), 
                         ),
                       ),
                     ],
@@ -314,6 +348,39 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
+             Positioned(
+                right: 2, // Position the button at the bottom-right
+                bottom: 40,
+                child: 
+                SizedBox( 
+                  width: 50,
+                  height: 50,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      const Icon(
+                        Icons.circle, // Background circle icon
+                        color: Colors.white, // Set the color of the circle
+                        size: 48.0, // Adjust the size of the circle
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.my_location, // The main location icon
+                          color: Colors.blue, // Customize the color
+                          size: 36.0, // Customize the size
+                        ),
+                        onPressed: () {
+                          // Your logic to get the current location goes here
+                          _getCurrentLocation();
+                        },
+                        tooltip: 'Get Current Location', // Tooltip for the button
+                      ),
+                    ],
+                  )
+
+
+              ),
+            ), 
           ],
         ),
       ),
