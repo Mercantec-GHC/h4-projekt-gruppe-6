@@ -13,6 +13,7 @@ import 'models.dart';
 import 'package:geolocator/geolocator.dart';
 import 'api.dart' as api;
 import 'package:http/http.dart' as http;
+import 'dart:developer';
 
 void main() {
   runApp(const MyApp());
@@ -52,13 +53,34 @@ class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   List<Favorite> _favorites = [];
   LatLng? _selectedPoint;
-  LatLng _currentPosition = LatLng(55.9397, 9.5156);
+  LatLng _currentPosition = LatLng(55.656707, 10.563214);
+  LatLng? _userPosition;
   double _zoom = 7.0;
+  MapController _mapController = MapController();
+  List<SearchResults> _searchResults = [];
   final TextEditingController searchBarInput =TextEditingController(text: '');
   final LocationSettings locationSettings = const LocationSettings(
     accuracy: LocationAccuracy.high,
     distanceFilter: 100,
   );
+
+
+    @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    api.isLoggedIn(context).then((isLoggedIn) {
+      if (!isLoggedIn || !mounted) return;
+
+      _fetchFavorites();
+    });
+  }
+
+  @override
+  void dispose() {
+    searchBarInput.dispose();
+    super.dispose();
+  }
 
   void _onTap(TapPosition _, LatLng point) async {
     setState(() => _selectedPoint = point);
@@ -186,64 +208,58 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    api.isLoggedIn(context).then((isLoggedIn) {
-      if (!isLoggedIn || !mounted) return;
-
-      _fetchFavorites();
-    });
-  }
+  
 
   Future<void> GetOpenStreetMapArea() async {
   final dynamic location;
-  LatLng point;
 
   if (searchBarInput.text != '') {
+
+    _searchResults.clear();
+
     final response = await http.get(
-      Uri.parse('https://nominatim.openstreetmap.org/search.php?q=${searchBarInput.text}&format=jsonv2'),
+      Uri.parse('https://nominatim.openstreetmap.org/search.php?q=Attractions+in+${searchBarInput.text}&format=jsonv2'),
       headers: {'User-Agent': 'SkanTravels/1.0'},
     );
 
     location = jsonDecode(response.body);
 
     if (location is List && location.isNotEmpty) {
-      final firstResult = location[0];  // Pick the first entry
+      for (var i = 0; i < location.length; i++) {
+        if (location[i]['lat'] != null && location[i]['lon'] != null && location[i]['name'] != null && location[i]['display_name'] != null) {
 
-      if (firstResult['lat'] != null && firstResult['lon'] != null && firstResult['name'] != null && firstResult['display_name'] != null) {
-        double lat = double.parse(firstResult['lat']);
-        double lon = double.parse(firstResult['lon']);
-        point = LatLng(lat, lon);
-        setState(() => _selectedPoint = point);
-        await _showLocation(point, firstResult['name'], firstResult['display_name']);
+          double lat = double.parse(location[i]['lat']);
+          double lon = double.parse(location[i]['lon']);
+          String description = location[i]['display_name'];
+          String name = location[i]['name'];
+
+          if (name == "") {
+            name = description.split(",")[0];
+          }
+          setState(() {
+            _searchResults.add(SearchResults(LatLng(lat, lon), name, description));
+          });
+            
+        }
+
       }
+      _mapController.move(_searchResults[0].location, 9);
     }
   }
 }
 
-   @override
-  void dispose() {
-    searchBarInput.dispose();
-    super.dispose();
-  }
-
-@override
-  void initState() {
-    super.initState();
-    _getCurrentLocation();  // Call the async method inside initState
-  }
-
  Future<void> _getCurrentLocation() async {
-    await Geolocator.checkPermission();
+    LocationPermission permission = await Geolocator.checkPermission();
+    if(permission == LocationPermission.always )
     await Geolocator.requestPermission();
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    
+    _mapController.move(LatLng(position.latitude, position.longitude), 10);
     setState(() {
-      _currentPosition = LatLng(position.latitude, position.longitude);
-      _zoom = 5.0;
+      _userPosition = LatLng(position.latitude, position.longitude);
     });
   }
+
 
  @override
   Widget build(BuildContext context) {
@@ -254,6 +270,7 @@ class _MyHomePageState extends State<MyHomePage> {
         body: Stack(
           children: [
             FlutterMap(
+              mapController: _mapController,
               options: MapOptions(
                 initialCenter: _currentPosition,
                 initialZoom: _zoom,
@@ -276,14 +293,34 @@ class _MyHomePageState extends State<MyHomePage> {
                         ],
                       ),
                     ),
-                    Marker(
-                      point: _currentPosition,
-                      width: 20,
-                      height: 20,
-                      alignment: Alignment.center,
-                      child: const Icon(Icons.circle_sharp, size: 15, color: Colors.blueAccent),
-                      ),
+                  if(_userPosition != null)
+                  Marker(
+                    point: _userPosition!,
+                    width: 20,
+                    height: 20,
+                    alignment: Alignment.center,
+                    child: const Icon(Icons.my_location, size: 15, color: Colors.blueAccent),
+                    ),
                   ]),
+                  ..._searchResults.map((point) => MarkerLayer(
+                      markers: [
+                        Marker(
+                          point: point.location,
+                          width: 30,
+                          height: 50,
+                          alignment: Alignment.center,
+                          child: Column(
+                            children: [
+                                IconButton(
+                                icon: const Icon(Icons.location_pin, size: 30, color: Colors.red),
+                                onPressed: () => _showLocation(point.location, point.name, point.description),
+                              ),
+                            ],
+                          )
+                         
+                        )
+                      ],
+                    )),
                 ..._favorites.map((favorite) => MarkerLayer(
                       markers: [
                         Marker(
@@ -326,6 +363,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               controller: searchBarInput,
                               suffixMode: OverlayVisibilityMode.never,
                               backgroundColor: Colors.white.withOpacity(0.9),
+                              placeholder: 'Search city based',
                             ),
                           ),
                         ],
@@ -349,7 +387,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
              Positioned(
-                right: 2, // Position the button at the bottom-right
+                right: 2,
                 bottom: 40,
                 child: 
                 SizedBox( 
@@ -359,26 +397,22 @@ class _MyHomePageState extends State<MyHomePage> {
                     alignment: Alignment.center,
                     children: [
                       const Icon(
-                        Icons.circle, // Background circle icon
-                        color: Colors.white, // Set the color of the circle
-                        size: 48.0, // Adjust the size of the circle
+                        Icons.circle,
+                        color: Colors.white,
+                        size: 48.0,
                       ),
                       IconButton(
                         icon: const Icon(
-                          Icons.my_location, // The main location icon
-                          color: Colors.blue, // Customize the color
-                          size: 36.0, // Customize the size
+                          Icons.location_searching,
+                          color: Colors.blue,
+                          size: 36.0,
                         ),
                         onPressed: () {
-                          // Your logic to get the current location goes here
                           _getCurrentLocation();
                         },
-                        tooltip: 'Get Current Location', // Tooltip for the button
                       ),
                     ],
                   )
-
-
               ),
             ), 
           ],

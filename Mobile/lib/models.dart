@@ -1,3 +1,5 @@
+import 'package:latlong2/latlong.dart';
+
 class Favorite {
   int id;
   String userId;
@@ -50,4 +52,12 @@ class User {
       DateTime.parse(json['createdAt']),
     );
   }
+}
+
+class SearchResults{
+  LatLng location;
+  String name;
+  String description;
+
+SearchResults(this.location, this.name, this.description);
 }
