@@ -39,7 +39,7 @@ public class UpdateUserDTO
     public string Password { get; set; }
 }
 
-public class RefreshTokenDTO 
+public class RefreshTokenDTO
 {
     public string RefreshToken { get; set; }
 }

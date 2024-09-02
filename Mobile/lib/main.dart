@@ -14,11 +14,11 @@ import 'models.dart';
 import 'package:http/http.dart' as http;
 
 void main() async {
+  // Refresh JWT on startup
   final prefs = await SharedPreferences.getInstance();
-  debugPrint('token: ' + (prefs.getString('token') ?? '') + ' reffresshh: ' + (prefs.getString("refresh-token") ?? ''));
   if (prefs.getString("token") != null && prefs.getString("refresh-token") != null) {
-    final token = await api.request(null, api.ApiService.auth, "POST", "/RefreshToken", {'refresh-token': prefs.getString("refresh-token")});
-    debugPrint(token);
+    final token = await api.request(null, api.ApiService.auth, "POST", "/RefreshToken", {'refreshToken': prefs.getString("refresh-token")});
+    if (token != null) prefs.setString("token", token);
   }
 
   runApp(const MyApp());

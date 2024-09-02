@@ -19,15 +19,15 @@ class _LoginPageState extends State<LoginPage> {
   final passwordInput = TextEditingController();
 
   Future<void> _login() async {
-    final token = await api.request(context, api.ApiService.auth, 'POST', '/api/Users/login', {
+    final response = await api.request(context, api.ApiService.auth, 'POST', '/api/Users/login', {
       'email': emailInput.text,
       'password': passwordInput.text,
     });
 
-    if (token == null) return;
+    if (response == null) return;
 
     // Assuming token is a JSON string
-    Map<String, dynamic> json = jsonDecode(token);
+    Map<String, dynamic> json = jsonDecode(response);
     Login jsonUser = Login.fromJson(json);
 
     final prefs = await SharedPreferences.getInstance();

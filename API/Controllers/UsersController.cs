@@ -58,15 +58,13 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<UserDTO>>> GetUsers()
         {
-            return await _queryAllUsers.Handle();   
+            return await _queryAllUsers.Handle();
         }
 
-        
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDTO>> GetUser(string id)
         {
             return await _queryUserById.Handle(id);
-
         }
 
         [Authorize]
@@ -87,14 +85,13 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteUser(string id)
         {
             return await _deleteUser.Handle(id);
-        } 
-        
+        }
+
         [HttpPost("/RefreshToken")]
         public async Task<IActionResult> RefreshToken(RefreshTokenDTO refreshTokenDTO)
         {
             User user = await _repository.QueryUserByRefreshTokenAsync(refreshTokenDTO.RefreshToken);
             return new OkObjectResult(_tokenHelper.GenerateJwtToken(user));
         }
-        
     }
 }
