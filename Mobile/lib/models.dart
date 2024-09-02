@@ -23,13 +23,15 @@ class Favorite {
 class Login {
   String token;
   String id;
+  String refreshToken;
 
-  Login(this.token, this.id);
+  Login(this.token, this.id, this.refreshToken);
 
   factory Login.fromJson(Map<String, dynamic> json) {
     return Login(
       json['token'],
       json['id'],
+      json['refreshToken'],
     );
   }
 }
