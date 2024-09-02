@@ -6,6 +6,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mobile/favorites.dart';
 import 'package:mobile/register.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
 import 'base/sidemenu.dart';
 import 'profile.dart';
@@ -15,7 +16,14 @@ import 'api.dart' as api;
 import 'package:http/http.dart' as http;
 import 'dart:developer';
 
-void main() {
+void main() async {
+  final prefs = await SharedPreferences.getInstance();
+  debugPrint('token: ' + (prefs.getString('token') ?? '') + ' reffresshh: ' + (prefs.getString("refresh-token") ?? ''));
+  if (prefs.getString("token") != null && prefs.getString("refresh-token") != null) {
+    final token = await api.request(null, api.ApiService.auth, "POST", "/RefreshToken", {'refresh-token': prefs.getString("refresh-token")});
+    debugPrint(token);
+  }
+
   runApp(const MyApp());
 }
 

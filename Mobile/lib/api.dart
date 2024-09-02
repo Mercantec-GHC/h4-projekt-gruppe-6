@@ -8,8 +8,8 @@ enum ApiService {
   app,
 }
 
-Future<String?> request(BuildContext context, ApiService service, String method, String path, Object? body) async {
-  final messenger = ScaffoldMessenger.of(context);
+Future<String?> request(BuildContext? context, ApiService service, String method, String path, Object? body) async {
+  final messenger = context != null ? ScaffoldMessenger.of(context) : null;
   final prefs = await SharedPreferences.getInstance();
 
   final host = switch (service) {
@@ -42,17 +42,20 @@ Future<String?> request(BuildContext context, ApiService service, String method,
         body: body != null ? jsonEncode(body) : null,
       );
     }
-  } catch (_) {
-    messenger.showSnackBar(const SnackBar(content: Text('Unable to connect to server')));
+  } catch (e) {
+    debugPrint(e.toString());
+    messenger?.showSnackBar(const SnackBar(content: Text('Unable to connect to server')));
     return null;
   }
 
   if (response.statusCode < 200 || response.statusCode >= 300) {
     try {
       final json = jsonDecode(response.body);
-      messenger.showSnackBar(SnackBar(content: Text(json['message'])));
-    } catch (_) {
-      messenger.showSnackBar(SnackBar(content: Text('Something went wrong (HTTP ${response.statusCode})')));
+      messenger?.showSnackBar(SnackBar(content: Text(json['message'])));
+      debugPrint('API error: ' + json['message']);
+    } catch (e) {
+      debugPrint(e.toString());
+      messenger?.showSnackBar(SnackBar(content: Text('Something went wrong (HTTP ${response.statusCode})')));
     }
     return null;
   }
