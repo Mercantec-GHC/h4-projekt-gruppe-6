@@ -11,5 +11,6 @@ namespace API.Persistence.Repositories
         Task<User> QueryUserByEmailAsync(string email);
         Task<bool> UpdateUserAsync(User user);
         Task<User> QueryUserByRefreshTokenAsync(string refreshToken);
+        void Save();
     }
 }

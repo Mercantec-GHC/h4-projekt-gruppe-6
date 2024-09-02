@@ -25,10 +25,7 @@ class _SideMenuState extends State<SideMenu> {
   }
 
   void _logout() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    prefs.remove('token');
-    prefs.remove('id');
+    api.logout();
 
     setState(() {
       user = null;

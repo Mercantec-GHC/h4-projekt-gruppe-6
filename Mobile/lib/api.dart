@@ -51,7 +51,7 @@ Future<String?> request(BuildContext? context, ApiService service, String method
   if (response.statusCode < 200 || response.statusCode >= 300) {
     try {
       final json = jsonDecode(response.body);
-      messenger?.showSnackBar(SnackBar(content: Text(json['message'])));
+      messenger?.showSnackBar(SnackBar(content: Text(json['message'] ?? json['title'])));
       debugPrint('API error: ' + json['message']);
     } catch (e) {
       debugPrint(e.toString());
@@ -69,7 +69,7 @@ Future<bool> isLoggedIn(BuildContext context) async {
 
   final token = prefs.getString('token');
   if (token == null) {
-    prefs.remove('id');
+    logout();
     return false;
   }
 
@@ -81,15 +81,25 @@ Future<bool> isLoggedIn(BuildContext context) async {
 
     if (payload['exp'] < DateTime.now().millisecondsSinceEpoch / 1000) {
       messenger.showSnackBar(const SnackBar(content: Text('Token expired, please sign in again')));
-      prefs.remove('token');
+
+      logout();
       return false;
     }
   } catch (e) {
     messenger.showSnackBar(const SnackBar(content: Text('Invalid token, please sign in again')));
-    prefs.remove('token');
     debugPrint(e.toString());
+
+    logout();
     return false;
   }
 
   return true;
+}
+
+void logout() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  prefs.remove('token');
+  prefs.remove('refresh-token');
+  prefs.remove('id');
 }

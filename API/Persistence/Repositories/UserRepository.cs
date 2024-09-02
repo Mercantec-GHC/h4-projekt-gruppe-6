@@ -78,5 +78,10 @@ namespace API.Persistence.Repositories
         {
             return await _context.Users.SingleOrDefaultAsync(u => u.RefreshToken == refreshToken);
         }
+
+        public void Save()
+        {
+            _context.SaveChanges();
+        }
     }
 }
