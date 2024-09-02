@@ -131,7 +131,7 @@ KC - Kundechef
 
 **PO(Reimar):** Færdiggjort implementation af name/description på favorites, lavet bottom sheet når man klikker på en lokation, ændret udseendet på location pins
 
-**KC(Philip):*Ingen kontakt fra programmeringsgruppen. Behøves heller ikke på nuværende tidspunkt*
+**KC(Philip):** Ingen kontakt fra programmeringsgruppen. Behøves heller ikke på nuværende tidspunkt*
 
 ## Tirsdag
 
@@ -139,7 +139,7 @@ KC - Kundechef
 
 **PO(Reimar):** Implementeret favorit-knap på location info bottom sheet, optimeret API requests
 
-**KC(Philip):**
+**KC(Philip):** Alt opdateres på profil i db, men ikke rigtigt vist i flutter
 
 ## Onsdag
 
@@ -147,7 +147,7 @@ KC - Kundechef
 
 **PO(Reimar):** Downloaded turist-guides for alle byer i Danmark
 
-**KC(Philip):**
+**KC(Philip):** vist ordenligt på flutter og fandt viden omkring søgefunktion og hvordan man bruger openstreetmapapi's search funktion
 
 ## Torsdag
 
@@ -155,7 +155,7 @@ KC - Kundechef
 
 **PO(Reimar):**
 
-**KC(Philip):**
+**KC(Philip):** Havde et møde med programmeringsgruppen hvor de viste at de havde lavet en lobby hvor 2 mobiler kunne forbinde til den lobby. Mega fedt!
 
 ## Fredag
 
@@ -163,7 +163,7 @@ KC - Kundechef
 
 **PO(Reimar):**
 
-**KC(Philip):**
+**KC(Philip):** søgefunktion med det første hit i et array lavet. Det skal ændres så man kan vælge alt fra valgmulighederne openstreetmapapi'en giver
 
 # Uge 36
 
