@@ -4,7 +4,7 @@ mod models;
 use actix_web::{get, post, delete, Responder, HttpResponse, HttpServer, App, web};
 use std::sync::{Mutex, MutexGuard, Arc};
 use auth::AuthorizedUser;
-use models::Favorite;
+use models::{Favorite, Review};
 use serde::Deserialize;
 
 mod embedded {
@@ -110,6 +110,94 @@ async fn delete_favorite(auth: AuthorizedUser, data:web::Data<AppData>, path: we
     }
 }
 
+#[get("/reviews")]
+async fn reviews(data: web::Data<AppData>) -> impl Responder {
+    let db = data.database.lock().unwrap();
+
+    match get_reviews(db) {
+        Some(reviews) => HttpResponse::Ok().insert_header(("Content-Type", "application/json; charset=utf-8")).json(reviews),
+        None => HttpResponse::InternalServerError().finish(),
+    }
+}
+
+fn get_reviews(db: MutexGuard<'_, rusqlite::Connection>) -> Option<Vec<Review>> {
+    Some(
+        db.prepare("SELECT * FROM reviews").ok()?
+            .query_map([], |row| Review::from_row(row))
+            .ok()?
+            .map(|rev| rev.unwrap())
+            .collect()
+    )
+}
+
+#[derive(Deserialize)]
+struct CreateReviewRequest {
+    lat: f64,
+    lng: f64,
+    place_name: String,
+    place_description: String,
+    title: String,
+    content: String,
+    rating: i64,
+}
+
+#[post("/reviews")]
+async fn create_review(auth: AuthorizedUser, data: web::Data<AppData>, input: web::Json<CreateReviewRequest>) -> impl Responder {
+    let db = data.database.lock().unwrap();
+
+    match db.execute(
+        "INSERT INTO reviews (user_id, lat, lng, place_name, place_description, title, content, rating) VALUES (:user_id, :lat, :lng, :place_name, :place_description, :title, :content, :rating)",
+        &[
+            (":user_id", &auth.user_id),
+            (":lat", &input.lat.to_string()),
+            (":lng", &input.lng.to_string()),
+            (":place_name", &input.place_name),
+            (":place_description", &input.place_description),
+            (":title", &input.title),
+            (":content", &input.content),
+            (":rating", &input.rating.to_string()),
+        ],
+    ) {
+        Ok(_) => HttpResponse::Created().json(Review {
+            id: db.last_insert_rowid(),
+            user_id: auth.user_id,
+            lat: input.lat,
+            lng: input.lng,
+            place_name: input.place_name.clone(),
+            place_description: input.place_description.clone(),
+            title: input.title.clone(),
+            content: input.content.clone(),
+            rating: input.rating.clone(), 
+        }),
+        Err(_) => HttpResponse::InternalServerError().finish(),
+    }
+}
+
+
+#[delete("/reviews/{review}")]
+async fn delete_review(auth: AuthorizedUser, data:web::Data<AppData>, path: web::Path<usize>) -> impl Responder {
+    let db = data.database.lock().unwrap();
+    let review_id = path.into_inner();
+    let params = &[(":id", &review_id.to_string())];
+
+    let result = db.query_row("SELECT * FROM reviews WHERE id = :id LIMIT 1", params, |row| Review::from_row(row));
+
+    if result.is_err() {
+        return HttpResponse::InternalServerError().finish();
+    }
+
+    let review = result.unwrap();
+
+    if review.user_id != auth.user_id {
+        return HttpResponse::Forbidden().body("Cannot remove review that you did not create");
+    }
+
+    match db.execute("DELETE FROM reviews WHERE id = :id", params) {
+        Ok(_) => HttpResponse::NoContent().finish(),
+        Err(_) => HttpResponse::InternalServerError().finish(),
+    }
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let _ = dotenvy::dotenv();
@@ -142,6 +230,9 @@ async fn main() -> std::io::Result<()> {
             .service(favorites)
             .service(create_favorite)
             .service(delete_favorite)
+            .service(reviews)
+            .service(create_review)
+            .service(delete_review)
     })
     .bind(("0.0.0.0", port))?
     .run()
