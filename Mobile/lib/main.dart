@@ -60,6 +60,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   List<Favorite> _favorites = [];
+  List<Review> _reviews = [];
   LatLng? _selectedPoint;
   LatLng _currentPosition = LatLng(55.656707, 10.563214);
   LatLng? _userPosition;
@@ -81,6 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
       if (!isLoggedIn || !mounted) return;
 
       _fetchFavorites();
+      _fetchReviews();
     });
   }
 
@@ -216,7 +218,16 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  
+  Future<void> _fetchReviews() async {
+    final response = await api.request(context, api.ApiService.app, 'GET', '/reviews', null);
+    if (response == null) return;
+
+    final List<dynamic> reviews = jsonDecode(response);
+    setState(() {
+      _reviews = reviews.map((review) => Review.fromJson(review)).toList();
+      debugPrint(_reviews.length.toString());
+    });
+  }
 
   Future<void> GetOpenStreetMapArea() async {
   final dynamic location;
@@ -329,7 +340,31 @@ class _MyHomePageState extends State<MyHomePage> {
                         )
                       ],
                     )),
-                ..._favorites.map((favorite) => MarkerLayer(
+                    ..._reviews.map((review) => MarkerLayer(
+                      markers: [
+                        Marker(
+                          point: LatLng(review.lat, review.lng),
+                          width: 30,
+                          height: 50,
+                          alignment: Alignment.center,
+                          child: Stack(
+                            children: [
+                              IconButton(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                icon: const Icon(Icons.location_pin, size: 30, color:Colors.purpleAccent),
+                                onPressed: () => _showLocation(LatLng(review.lat, review.lng), review.place_name, review.place_description),
+                              ),
+                              IconButton(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                icon: const Icon(Icons.location_on_outlined, size: 30, color: Colors.purple),
+                                onPressed: () => _showLocation(LatLng(review.lat, review.lng), review.place_name, review.place_description),
+                              ),
+                            ],
+                          )
+                        )
+                      ],
+                    )),
+                    ..._favorites.map((favorite) => MarkerLayer(
                       markers: [
                         Marker(
                           point: LatLng(favorite.lat, favorite.lng),
