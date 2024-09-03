@@ -218,17 +218,25 @@ class _MyHomePageState extends State<MyHomePage> {
 
   
 
-  Future<void> GetOpenStreetMapArea() async {
+  Future<void> _getOpenStreetMapArea(LatLng fromGetLocation) async {
   final dynamic location;
-
-  if (searchBarInput.text != '') {
-
-    _searchResults.clear();
-
-    final response = await http.get(
+  if (searchBarInput.text == '' && fromGetLocation == const LatLng(00.0000, 00.0000)) {
+    return;
+  }
+  final http.Response response;
+  _searchResults.clear();
+  if (fromGetLocation == const LatLng(00.0000, 00.0000)) {
+      response = await http.get(
       Uri.parse('https://nominatim.openstreetmap.org/search.php?q=Attractions+in+${searchBarInput.text}&format=jsonv2'),
       headers: {'User-Agent': 'SkanTravels/1.0'},
     );
+  }
+  else{
+    response = await http.get(
+      Uri.parse('https://nominatim.openstreetmap.org/search.php?q=Attractions+near+${fromGetLocation.latitude}%2C+${fromGetLocation.longitude}&format=jsonv2'),
+      headers: {'User-Agent': 'SkanTravels/1.0'},
+    );
+  }
 
     location = jsonDecode(response.body);
 
@@ -251,21 +259,29 @@ class _MyHomePageState extends State<MyHomePage> {
         }
 
       }
-      _mapController.move(_searchResults[0].location, 9);
+      if(fromGetLocation == const LatLng(00.0000, 00.0000)){
+        _mapController.move(_searchResults[0].location, 9);
+      }
     }
-  }
+  
 }
 
  Future<void> _getCurrentLocation() async {
     LocationPermission permission = await Geolocator.checkPermission();
-    if(permission == LocationPermission.always )
-    await Geolocator.requestPermission();
+    if(permission != LocationPermission.always || permission != LocationPermission.whileInUse){
+    }
+    else{
+      await Geolocator.requestPermission();
+    }
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    
+
+    _getOpenStreetMapArea(LatLng(position.latitude, position.longitude));
+
     _mapController.move(LatLng(position.latitude, position.longitude), 10);
     setState(() {
       _userPosition = LatLng(position.latitude, position.longitude);
     });
+
   }
 
 
@@ -388,7 +404,9 @@ class _MyHomePageState extends State<MyHomePage> {
                             width: 100,
                             height: 28,
                             child: ElevatedButton(
-                              onPressed: GetOpenStreetMapArea,
+                              onPressed: () {
+                                _getOpenStreetMapArea(const LatLng(00.0000, 00.0000));
+                              },
                               child: const Text('Search'),
                             ),
                           ),
