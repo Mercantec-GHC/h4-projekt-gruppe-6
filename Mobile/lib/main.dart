@@ -370,57 +370,65 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: CupertinoSearchTextField(
                               controller: searchBarInput,
                               suffixMode: OverlayVisibilityMode.never,
-                              backgroundColor: Colors.white.withOpacity(0.9),
                               placeholder: 'Search city based',
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: Colors.white.withOpacity(0.9),
+                                boxShadow: const [BoxShadow(color: Color(0x20000000), offset: Offset(0, 1), blurRadius: 4)]
+                              ),
                             ),
                           ),
                         ],
                       ),
-                        Positioned(
-                          right: 2, // Position the button at the bottom-right
-                          bottom: 4.5,
-                          child: 
-                          SizedBox( 
+                      Positioned(
+                        right: 2, // Position the button at the bottom-right
+                        bottom: 4.5,
+                        child:
+                          SizedBox(
                             width: 100,
                             height: 28,
                             child: ElevatedButton(
-                                onPressed: GetOpenStreetMapArea,
-                                child: const Text('Search'),
-                              ), 
-                        ),
+                              onPressed: GetOpenStreetMapArea,
+                              child: const Text('Search'),
+                            ),
+                          ),
                       ),
                     ],
                   ),
                 ),
               ),
             ),
-             Positioned(
-                right: 2,
-                bottom: 40,
-                child: 
-                SizedBox( 
-                  width: 50,
-                  height: 50,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      const Icon(
-                        Icons.circle,
-                        color: Colors.white,
-                        size: 48.0,
-                      ),
-                      IconButton(
+           Positioned(
+            right: 2,
+            bottom: 50,
+            child:
+              SizedBox(
+                width: 50,
+                height: 50,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    const Icon(
+                      Icons.circle,
+                      color: Colors.white,
+                      size: 48.0,
+                      shadows: [BoxShadow(color: Color(0x20000000), offset: Offset(0, 1), blurRadius: 4)],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(3),
+                      child: IconButton(
                         icon: const Icon(
                           Icons.location_searching,
                           color: Colors.blue,
-                          size: 36.0,
+                          size: 28.0,
                         ),
                         onPressed: () {
                           _getCurrentLocation();
                         },
                       ),
-                    ],
-                  )
+                    ),
+                  ],
+                ),
               ),
             ), 
           ],
@@ -430,7 +438,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   TileLayer get openStreetMapTileLayer => TileLayer(
-        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-        userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-      );
+    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+  );
 }
