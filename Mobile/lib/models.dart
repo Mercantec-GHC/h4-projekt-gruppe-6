@@ -30,9 +30,10 @@ class Review {
   String place_name;
   String place_description;
   String title;
+  String content;
   int rating;
 
-  Review(this.id, this.userId, this.lat, this.lng, this.place_name, this.place_description, this.title, this.rating);
+  Review(this.id, this.userId, this.lat, this.lng, this.place_name, this.place_description, this.title, this.content, this.rating);
 
   factory Review.fromJson(Map<String, dynamic> json) {
     return Review(
@@ -43,7 +44,8 @@ class Review {
       json['place_name'],
       json['place_description'],
       json['title'],
-      json['rating']
+      json['content'],
+      json['rating'],
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mobile/favorites.dart';
 import 'package:mobile/register.dart';
+import 'package:mobile/reviewList.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
 import 'base/sidemenu.dart';
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
         '/favorites': (context) => const FavoritesPage(),
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
+        '/reviews': (context) => const ReviewListPage(),
       },
     );
   }
@@ -128,6 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() => _selectedPoint = null);
   }
 
+  // Open location bottom menu
   Future<void> _showLocation(LatLng point, String name, String description) async {
     await showModalBottomSheet(
       barrierColor: Colors.black.withOpacity(0.3),
@@ -140,6 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: const EdgeInsets.all(20),
               width: MediaQuery.of(context).size.width,
               child: Row(children: [
+                // Location information
                 Expanded(child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -148,14 +152,27 @@ class _MyHomePageState extends State<MyHomePage> {
                     Text(description),
                   ],
                 )),
+
                 Column(children: [
+                  // Toggle favorite button
                   IconButton(
-                      icon: const Icon(Icons.star),
-                      iconSize: 32,
-                      color: _favorites.where((fav) => fav.lat == point.latitude && fav.lng == point.longitude).isEmpty ? Colors.grey : Colors.yellow,
-                      onPressed: () => _toggleFavorite(point, name, description, setModalState, context)
+                    icon: const Icon(Icons.star),
+                    iconSize: 32,
+                    color: _favorites.where((fav) => fav.lat == point.latitude && fav.lng == point.longitude).isEmpty ? Colors.grey : Colors.yellow,
+                    onPressed: () => _toggleFavorite(point, name, description, setModalState, context)
                   ),
-                  const IconButton(icon: Icon(Icons.rate_review), iconSize: 32, onPressed: null),
+
+                  // View reviews button
+                  IconButton(
+                    icon: const Icon(Icons.rate_review),
+                    iconSize: 32,
+                    onPressed: () =>
+                      Navigator.pushReplacementNamed(
+                        context,
+                        '/reviews',
+                        arguments: _reviews.where((review) => review.lat == point.latitude && review.lng == point.longitude).toList()
+                      ),
+                  ),
                 ]),
               ]),
             ),
