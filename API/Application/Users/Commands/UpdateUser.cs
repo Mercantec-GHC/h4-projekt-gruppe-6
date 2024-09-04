@@ -1,5 +1,6 @@
 ﻿using API.Models;
 using API.Persistence.Repositories;
+using API.Persistence.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
 
@@ -8,10 +9,16 @@ namespace API.Application.Users.Commands
     public class UpdateUser
     {
         private readonly IUserRepository _repository;
+        private readonly R2Service _r2Service;
+        private readonly string _accessKey;
+        private readonly string _secretKey;
 
-        public UpdateUser(IUserRepository repository)
+        public UpdateUser(IUserRepository repository, AppConfiguration config)
         {
             _repository = repository;
+            _accessKey = config.AccessKey;
+            _secretKey = config.SecretKey;
+            _r2Service = new R2Service(_accessKey, _secretKey);
         }
 
         public async Task<IActionResult> Handle(UpdateUserDTO updateUserDTO)
@@ -31,22 +38,41 @@ namespace API.Application.Users.Commands
                     return new ConflictObjectResult(new { message = "Email is already in use." });
                 }
             }
-            if (updateUserDTO.Password != "")
+            if (updateUserDTO.Password != "½")
             {
                 if (IsPasswordSecure(updateUserDTO.Password))
                 {
                     string hashedPassword = BCrypt.Net.BCrypt.HashPassword(updateUserDTO.Password);
                     currentUser.HashedPassword = hashedPassword;
                 }
+                else
+                {
+                    return new ConflictObjectResult(new { message = "Password is not secure." });
+                }
             }
-            if (updateUserDTO.Username != "")
+            if (updateUserDTO.Username != "½")
                 currentUser.Username = updateUserDTO.Username;
-            if (updateUserDTO.Email != "")
+            if (updateUserDTO.Email != "½")
                 currentUser.Email = updateUserDTO.Email;
 
+            string imageUrl = null;
+            if (updateUserDTO.ProfilePicture != null && updateUserDTO.ProfilePicture.Length > 0)
+            {
 
+                try
+                {
+                    using (var fileStream = updateUserDTO.ProfilePicture.OpenReadStream())
+                    {
+                        imageUrl = await _r2Service.UploadToR2(fileStream, "PP" + updateUserDTO.Id);
+                        currentUser.ProfilePicture = imageUrl;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                }
 
-
+            }
 
             bool success = await _repository.UpdateUserAsync(currentUser);
             if (success)

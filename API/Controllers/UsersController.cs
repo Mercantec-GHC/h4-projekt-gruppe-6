@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Helpers;
 using Microsoft.AspNetCore.Identity;
 using API.Persistence.Repositories;
+using API.Persistence.Services;
 
 namespace API.Controllers
 {
@@ -26,6 +27,8 @@ namespace API.Controllers
         private readonly DeleteUser _deleteUser;
         private readonly LoginUser _loginUser;
         private readonly TokenHelper _tokenHelper;
+
+        
         private readonly IUserRepository _repository;
 
         public UsersController(
@@ -36,7 +39,8 @@ namespace API.Controllers
             DeleteUser deleteUser,
             LoginUser loginUser,
             TokenHelper tokenHelper,
-            IUserRepository repository)
+            IUserRepository repository
+            )
         {
             _queryAllUsers = queryAllUsers;
             _queryUserById = queryUserById;
@@ -46,6 +50,8 @@ namespace API.Controllers
             _loginUser = loginUser;
             _tokenHelper = tokenHelper;
             _repository = repository;
+
+            
         }
 
         [HttpPost("login")]
@@ -69,7 +75,7 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPut]
-        public async Task<IActionResult> PutUser(UpdateUserDTO UpdateUserDTO)
+        public async Task<IActionResult> PutUser([FromForm] UpdateUserDTO UpdateUserDTO)
         {
             return await _updateUser.Handle(UpdateUserDTO);
         }

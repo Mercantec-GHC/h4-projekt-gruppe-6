@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using Helpers;
+using API.Persistence.Services;
 
 namespace API
 {
@@ -69,6 +70,8 @@ namespace API
                 };
             });
 
+            
+
             // Swagger does not by default allow to use Bearer tokens
             // The method AddSwaggerGen with the following options grants access to address a Bearer token -
             // Simply by clicking the Lock icon and pasting the Bearer Token
@@ -104,6 +107,15 @@ namespace API
             builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlite(connectionString));
 
             Console.WriteLine("Connecting to database with connection string: " + connectionString);
+
+            var accessKey = Configuration["AccessKey"] ?? Environment.GetEnvironmentVariable("ACCESS_KEY");
+            var secretKey = Configuration["SecretKey"] ?? Environment.GetEnvironmentVariable("SECRET_KEY");
+
+            builder.Services.AddSingleton(new AppConfiguration
+            {
+                AccessKey = accessKey,
+                SecretKey = secretKey
+            });
 
             var app = builder.Build();
 
