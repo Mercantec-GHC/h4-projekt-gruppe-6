@@ -18,7 +18,7 @@ class _ReviewListState extends State<ReviewListPage> {
 
     return SideMenu(
       selectedIndex: -1,
-      body: SingleChildScrollView(child: Container(
+      body: Scaffold(body: SingleChildScrollView(child: Container(
         decoration: const BoxDecoration(color: Color(0xFFF9f9f9)),
         width: MediaQuery.of(context).size.width,
         padding: const EdgeInsets.all(20.0),
@@ -59,6 +59,13 @@ class _ReviewListState extends State<ReviewListPage> {
           )).toList(),
         ),
       )),
-    );
+      floatingActionButton: const FloatingActionButton(
+        onPressed: null,
+        backgroundColor: Colors.blue,
+        focusColor: Colors.blueGrey,
+        tooltip: "Write a Review",
+        child: Icon(CupertinoIcons.plus),
+      ),
+    ));
   }
 }
