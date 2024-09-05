@@ -18,7 +18,7 @@ namespace API.Persistence.Services
             var credentials = new BasicAWSCredentials(accessKey, secretKey);
             var config = new AmazonS3Config
             {
-                ServiceURL = "https://a6051dbbe0af70488aff47b9f4d9fc1c.r2.cloudflarestorage.com",
+                ServiceURL = "https://a6051dbbe0af70488aff47b9f4d9fc1c.r2.cloudflarestorage.com/h4picturebucket",
                 ForcePathStyle = true
             };
             _s3Client = new AmazonS3Client(credentials, config);
@@ -29,7 +29,7 @@ namespace API.Persistence.Services
             var request = new PutObjectRequest
             {
                 InputStream = fileStream,
-                BucketName = "h4fil",
+                BucketName = "h4picturebucket",
                 Key = fileName,
                 DisablePayloadSigning = true
             };
@@ -41,7 +41,7 @@ namespace API.Persistence.Services
                 throw new AmazonS3Exception($"Error uploading file to S3. HTTP Status Code: {response.HttpStatusCode}");
             }
 
-            var imageUrl = $"https://h4file.magsapi.com/{fileName}";
+            var imageUrl = $"https://pub-bf709b641048489ca70f693673e3e04c.r2.dev/{fileName}";
             return imageUrl;
         }
     }

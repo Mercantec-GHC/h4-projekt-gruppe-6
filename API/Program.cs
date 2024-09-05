@@ -70,7 +70,7 @@ namespace API
                 };
             });
 
-            
+
 
             // Swagger does not by default allow to use Bearer tokens
             // The method AddSwaggerGen with the following options grants access to address a Bearer token -
@@ -101,7 +101,7 @@ namespace API
                         new string[] { }
                     }
                 });
-                        });
+            });
 
             var connectionString = Configuration.GetConnectionString("DefaultConnection") ?? Environment.GetEnvironmentVariable("DEFAULT_CONNECTION");
             builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlite(connectionString));

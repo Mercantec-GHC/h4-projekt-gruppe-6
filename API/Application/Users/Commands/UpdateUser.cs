@@ -23,22 +23,32 @@ namespace API.Application.Users.Commands
 
         public async Task<IActionResult> Handle(UpdateUserDTO updateUserDTO)
         {
-            List<User> existingUsers = await _repository.QueryAllUsersAsync();
             User currentUser = await _repository.QueryUserByIdAsync(updateUserDTO.Id);
 
-            foreach (User existingUser in existingUsers)
+            if (updateUserDTO.Username != null || updateUserDTO.Email != null)
             {
-                if (existingUser.Username == updateUserDTO.Username && existingUser.Username != currentUser.Username)
+                List<User> existingUsers = await _repository.QueryAllUsersAsync();
+
+                foreach (User existingUser in existingUsers)
                 {
-                    return new ConflictObjectResult(new { message = "Username is already in use." });
+                    if (existingUser.Username == updateUserDTO.Username && existingUser.Username != currentUser.Username)
+                    {
+                        return new ConflictObjectResult(new { message = "Username is already in use." });
+                    }
+
+                    if (existingUser.Email == updateUserDTO.Email && existingUser.Email != currentUser.Email)
+                    {
+                        return new ConflictObjectResult(new { message = "Email is already in use." });
+                    }
                 }
 
-                if (existingUser.Email == updateUserDTO.Email && existingUser.Email != currentUser.Email)
-                {
-                    return new ConflictObjectResult(new { message = "Email is already in use." });
-                }
+                if (updateUserDTO.Username != null)
+                    currentUser.Username = updateUserDTO.Username;
+                if (updateUserDTO.Email != null)
+                    currentUser.Email = updateUserDTO.Email;
             }
-            if (updateUserDTO.Password != "½")
+
+            if (updateUserDTO.Password != null)
             {
                 if (IsPasswordSecure(updateUserDTO.Password))
                 {
@@ -50,20 +60,16 @@ namespace API.Application.Users.Commands
                     return new ConflictObjectResult(new { message = "Password is not secure." });
                 }
             }
-            if (updateUserDTO.Username != "½")
-                currentUser.Username = updateUserDTO.Username;
-            if (updateUserDTO.Email != "½")
-                currentUser.Email = updateUserDTO.Email;
+            
 
             string imageUrl = null;
             if (updateUserDTO.ProfilePicture != null && updateUserDTO.ProfilePicture.Length > 0)
             {
-
                 try
                 {
                     using (var fileStream = updateUserDTO.ProfilePicture.OpenReadStream())
                     {
-                        imageUrl = await _r2Service.UploadToR2(fileStream, "PP" + updateUserDTO.Id);
+                        imageUrl = await _r2Service.UploadToR2(fileStream, "PP" + updateUserDTO.Id+".png");
                         currentUser.ProfilePicture = imageUrl;
                     }
                 }
@@ -71,7 +77,6 @@ namespace API.Application.Users.Commands
                 {
                     return new StatusCodeResult(StatusCodes.Status500InternalServerError);
                 }
-
             }
 
             bool success = await _repository.UpdateUserAsync(currentUser);
