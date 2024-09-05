@@ -50,6 +50,20 @@ class Review {
   }
 }
 
+class Place {
+  String name;
+  String description;
+
+  Place(this.name, this.description);
+}
+
+class ReviewList {
+  List<Review> reviews;
+  Place place;
+
+  ReviewList(this.reviews, this.place);
+}
+
 class Login {
   String token;
   String id;

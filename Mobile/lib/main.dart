@@ -4,9 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:mobile/createreview.dart';
 import 'package:mobile/favorites.dart';
 import 'package:mobile/register.dart';
-import 'package:mobile/reviewList.dart';
+import 'package:mobile/reviewlist.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
 import 'base/sidemenu.dart';
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
         '/reviews': (context) => const ReviewListPage(),
+        '/create-review': (context) => const CreateReviewPage(),
       },
     );
   }
@@ -166,11 +168,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   IconButton(
                     icon: const Icon(Icons.rate_review),
                     iconSize: 32,
+                    color: Colors.grey,
                     onPressed: () =>
                       Navigator.pushReplacementNamed(
                         context,
                         '/reviews',
-                        arguments: _reviews.where((review) => review.lat == point.latitude && review.lng == point.longitude).toList()
+                        arguments: ReviewList(_reviews.where((review) => review.lat == point.latitude && review.lng == point.longitude).toList(), Place(name, description))
                       ),
                   ),
                 ]),

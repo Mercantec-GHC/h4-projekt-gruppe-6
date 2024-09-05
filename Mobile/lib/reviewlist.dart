@@ -13,13 +13,14 @@ class ReviewListPage extends StatefulWidget {
 class _ReviewListState extends State<ReviewListPage> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    final reviews = ModalRoute.of(context)!.settings.arguments as List<Review>;
+    final arg = ModalRoute.of(context)!.settings.arguments as ReviewList;
+    final reviews = arg.reviews;
+    final place = arg.place;
 
     return SideMenu(
       selectedIndex: -1,
       body: Scaffold(body: SingleChildScrollView(child: Container(
-        decoration: const BoxDecoration(color: Color(0xFFF9f9f9)),
+        decoration: const BoxDecoration(color: Color(0xFFF9F9F9)),
         width: MediaQuery.of(context).size.width,
         padding: const EdgeInsets.all(20.0),
         child: Column(children:
@@ -59,12 +60,12 @@ class _ReviewListState extends State<ReviewListPage> {
           )).toList(),
         ),
       )),
-      floatingActionButton: const FloatingActionButton(
-        onPressed: null,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.pushNamed(context, '/create-review', arguments: place),
         backgroundColor: Colors.blue,
         focusColor: Colors.blueGrey,
         tooltip: "Write a Review",
-        child: Icon(CupertinoIcons.plus),
+        child: const Icon(CupertinoIcons.plus),
       ),
     ));
   }
