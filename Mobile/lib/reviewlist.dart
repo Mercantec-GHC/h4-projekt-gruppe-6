@@ -61,7 +61,10 @@ class _ReviewListState extends State<ReviewListPage> {
         ),
       )),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.pushNamed(context, '/create-review', arguments: place),
+        onPressed: () async {
+          final review = await Navigator.pushNamed(context, '/create-review', arguments: place) as Review?;
+          if (review != null) reviews.add(review);
+        },
         backgroundColor: Colors.blue,
         focusColor: Colors.blueGrey,
         tooltip: "Write a Review",

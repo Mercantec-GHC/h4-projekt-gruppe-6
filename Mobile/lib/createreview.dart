@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:mobile/base/sidemenu.dart';
 import 'models.dart';
@@ -91,5 +93,13 @@ class _CreateReviewState extends State<CreateReviewPage> {
       'lat': place!.point.latitude,
       'lng': place!.point.longitude,
     });
+
+    if (response == null || !mounted) return;
+
+    final review = Review.fromJson(jsonDecode(response));
+
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Review submitted')));
+
+    Navigator.pop(context, review);
   }
 }
