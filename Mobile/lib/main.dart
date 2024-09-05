@@ -173,7 +173,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.pushReplacementNamed(
                         context,
                         '/reviews',
-                        arguments: ReviewList(_reviews.where((review) => review.lat == point.latitude && review.lng == point.longitude).toList(), Place(name, description))
+                        arguments: ReviewList(_reviews.where((review) => review.lat == point.latitude && review.lng == point.longitude).toList(), Place(name, description, point))
                       ),
                   ),
                 ]),

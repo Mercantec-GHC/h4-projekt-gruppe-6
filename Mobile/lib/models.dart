@@ -53,8 +53,9 @@ class Review {
 class Place {
   String name;
   String description;
+  LatLng point;
 
-  Place(this.name, this.description);
+  Place(this.name, this.description, this.point);
 }
 
 class ReviewList {
@@ -98,10 +99,10 @@ class User {
   }
 }
 
-class SearchResults{
+class SearchResults {
   LatLng location;
   String name;
   String description;
 
-SearchResults(this.location, this.name, this.description);
+  SearchResults(this.location, this.name, this.description);
 }
