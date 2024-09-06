@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:latlong2/latlong.dart';
 
 class Favorite {
@@ -41,16 +43,18 @@ class Login {
 class User {
   String id;
   String email;
-  String username;
+  String username;  
+  File? profilePicture;
   DateTime createdAt;
 
-  User( this.id, this.email, this.username, this.createdAt);
+  User( this.id, this.email, this.username, this.profilePicture, this.createdAt);
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       json['id'],
       json['email'],
       json['username'],
+      json['profilePicture'],
       DateTime.parse(json['createdAt']),
     );
   }

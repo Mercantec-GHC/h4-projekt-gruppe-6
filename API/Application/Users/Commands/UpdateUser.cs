@@ -60,7 +60,7 @@ namespace API.Application.Users.Commands
                     return new ConflictObjectResult(new { message = "Password is not secure." });
                 }
             }
-            
+
 
             string imageUrl = null;
             if (updateUserDTO.ProfilePicture != null && updateUserDTO.ProfilePicture.Length > 0)
@@ -69,7 +69,7 @@ namespace API.Application.Users.Commands
                 {
                     using (var fileStream = updateUserDTO.ProfilePicture.OpenReadStream())
                     {
-                        imageUrl = await _r2Service.UploadToR2(fileStream, "PP" + updateUserDTO.Id+".png");
+                        imageUrl = await _r2Service.UploadToR2(fileStream, "PP" + updateUserDTO.Id + ".png");
                         currentUser.ProfilePicture = imageUrl;
                     }
                 }

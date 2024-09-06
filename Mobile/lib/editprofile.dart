@@ -1,4 +1,8 @@
+
+import 'dart:io';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mobile/models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'api.dart' as api;
@@ -6,7 +10,7 @@ import 'base/variables.dart';
 
 class EditProfilePage extends StatefulWidget {
    final User? userData;
-
+   
   const EditProfilePage({super.key, required this.userData});
 
 
@@ -19,7 +23,8 @@ class _ProfilePageState extends State<EditProfilePage> {
   TextEditingController emailInput = TextEditingController();
   TextEditingController passwordInput = TextEditingController();
   TextEditingController confirmPasswordInput = TextEditingController();
-  
+  File? _selectedImage;
+
   set userData(User userData) {}
 
 
@@ -41,6 +46,50 @@ class _ProfilePageState extends State<EditProfilePage> {
     super.dispose();
   }
 
+  Future _pickImageFromGallery() async{
+    final picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if(image == null) {return;}
+    else{
+      File compressedFile = await _compressImage(File(image.path));
+        setState(() {
+          _selectedImage = compressedFile;
+        });
+    }
+   
+  }
+
+  Future _pickImageFromCamera() async{
+   final picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.camera);
+
+    if(image == null) {return;}
+    else{
+      File compressedFile = await _compressImage(File(image.path));
+        setState(() {
+          _selectedImage = compressedFile;
+        });
+    }
+  }
+
+  Future<File> _compressImage(File file) async {
+    final filePath = file.absolute.path;
+    final lastIndex = filePath.lastIndexOf(RegExp(r'.jp'));
+    final splitted = filePath.substring(0, lastIndex);
+    final outPath = "${splitted}_compressed.jpg";
+
+    var result = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path,
+      outPath,
+      quality: 80,
+      minWidth: 1024,
+      minHeight: 1024,
+    );
+
+    return File(result!.path);
+  }
+
   void _saveProfile() async {
     if (passwordInput.text != confirmPasswordInput.text) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -54,12 +103,13 @@ class _ProfilePageState extends State<EditProfilePage> {
     if (!mounted) {
       return;
     }
-
-    final response = await api.request(context, api.ApiService.auth, 'PUT', '/api/users', {
+  if (id != null){
+   final response = await api.request(context, api.ApiService.auth, 'PUT', '/api/users', {
       'id' : id,
       'username': usernameInput.text,
       'email': emailInput.text,
       'password': passwordInput.text,
+      'profilePicture': _selectedImage,
     });
 
     if (!mounted) {
@@ -68,9 +118,10 @@ class _ProfilePageState extends State<EditProfilePage> {
 
     if (response != null) {
       User updatedUser = User(
-        id!,
+        id,
         emailInput.text,
         usernameInput.text,
+        _selectedImage,
         DateTime.now(),
       );
       setState(() {
@@ -84,7 +135,8 @@ class _ProfilePageState extends State<EditProfilePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Something went wrong! Please contact an admin.')),
       );
-    }
+    } 
+  }
   }
 
   void _deleteProfile(BuildContext context) {
@@ -167,7 +219,16 @@ class _ProfilePageState extends State<EditProfilePage> {
               controller: confirmPasswordInput,
               decoration: InputDecoration(labelText: 'Repeat new password'),
             ),
+            Row(
+              children: [
+                ElevatedButton(onPressed: _pickImageFromGallery, child: Text('Gallery')),
+                ElevatedButton(onPressed: _pickImageFromCamera, child: Text('Camera'))
+              ],
+            ),
             SizedBox(height: 20),
+            Text('ProfilePicture:'),
+            if(_selectedImage != null)
+            Text(_selectedImage!.path.toString()),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

@@ -29,7 +29,6 @@ namespace API.Persistence.Services
             var request = new PutObjectRequest
             {
                 InputStream = fileStream,
-                BucketName = "h4picturebucket",
                 Key = fileName,
                 DisablePayloadSigning = true
             };

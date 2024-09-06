@@ -60,7 +60,7 @@ namespace API.Controllers
             return await _loginUser.Handle(login);
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         public async Task<ActionResult<List<UserDTO>>> GetUsers()
         {
@@ -75,7 +75,7 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPut]
-        public async Task<IActionResult> PutUser([FromForm] UpdateUserDTO UpdateUserDTO)
+        public async Task<IActionResult> PutUser(UpdateUserDTO UpdateUserDTO)
         {
             return await _updateUser.Handle(UpdateUserDTO);
         }
