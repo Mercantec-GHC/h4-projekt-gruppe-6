@@ -173,7 +173,7 @@ KC - Kundechef
 
 **KC(Reimar):**
 
-**SM(Philip):**
+**SM(Philip):** Fandt ud af hvem der lavede hvad. Jeg arbejdede videre på søgefunktion for at optimere hvad output er. gutterne lavede reviews
 
 ## Tirsdag
 
@@ -181,7 +181,7 @@ KC - Kundechef
 
 **KC(Reimar):**
 
-**SM(Philip):**
+**SM(Philip):** Blev færdig med søgefunktion og videoen til billeder blev sendt ud, som jeg kiggede lidt på. søgefunktionen er stadig lort, men der er noget der hedder osm.org vi kan kigge på. Den virker dog så vi besluttede at lave andet funktionallitet der var vigtigere
 
 ## Onsdag
 
@@ -189,7 +189,7 @@ KC - Kundechef
 
 **KC(Reimar):**
 
-**SM(Philip):**
+**SM(Philip):** arbejde videre med billeder. fik det næsten til at virke på API lag
 
 ## Torsdag
 
@@ -197,7 +197,7 @@ KC - Kundechef
 
 **KC(Reimar):**
 
-**PO(Philip):**
+**PO(Philip):** havde møde med programmeringsgruppen og så de fede ting de havde lavet. API med billeder og cloudflare fuldkommen sat op
 
 ## Fredag
 
@@ -205,7 +205,7 @@ KC - Kundechef
 
 **KC(Reimar):**
 
-**SM(Philip):**
+**SM(Philip):** Kan ikke få sendt noget igennem fra flutter til api med lorte billede. HJÆÆÆÆÆÆÆÆÆÆÆÆÆÆÆLP. 
 
 # Uge 37
 
