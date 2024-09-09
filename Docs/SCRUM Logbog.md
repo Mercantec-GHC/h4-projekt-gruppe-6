@@ -153,7 +153,7 @@ KC - Kundechef
 
 **SM(Alexander):**
 
-**PO(Reimar):**
+**PO(Reimar):** Begyndt på implementering af refresh tokens, fikset en fejl med en openssl dependency til vores release-flow
 
 **KC(Philip):** Havde et møde med programmeringsgruppen hvor de viste at de havde lavet en lobby hvor 2 mobiler kunne forbinde til den lobby. Mega fedt!
 
@@ -161,7 +161,7 @@ KC - Kundechef
 
 **SM(Alexander):**
 
-**PO(Reimar):**
+**PO(Reimar):** Holdt kundemøder
 
 **KC(Philip):** søgefunktion med det første hit i et array lavet. Det skal ændres så man kan vælge alt fra valgmulighederne openstreetmapapi'en giver
 
@@ -171,7 +171,7 @@ KC - Kundechef
 
 **PO(Alexander):**
 
-**KC(Reimar):**
+**KC(Reimar):** Færdiggjort refresh token implementation
 
 **SM(Philip):** Fandt ud af hvem der lavede hvad. Jeg arbejdede videre på søgefunktion for at optimere hvad output er. gutterne lavede reviews
 
@@ -179,7 +179,7 @@ KC - Kundechef
 
 **PO(Alexander):**
 
-**KC(Reimar):**
+**KC(Reimar):** Implementeret reviews i rust backenden, fået vist dem som location pins på kortet
 
 **SM(Philip):** Blev færdig med søgefunktion og videoen til billeder blev sendt ud, som jeg kiggede lidt på. søgefunktionen er stadig lort, men der er noget der hedder osm.org vi kan kigge på. Den virker dog så vi besluttede at lave andet funktionallitet der var vigtigere
 
@@ -187,7 +187,7 @@ KC - Kundechef
 
 **PO(Alexander):**
 
-**KC(Reimar):**
+**KC(Reimar):** Implementeret review-liste når man klikker ind på én
 
 **SM(Philip):** arbejde videre med billeder. fik det næsten til at virke på API lag
 
@@ -195,7 +195,7 @@ KC - Kundechef
 
 **PO(Alexander):**
 
-**KC(Reimar):**
+**KC(Reimar):** Lavet create review-side, tilføjet stjerner til review-liste
 
 **PO(Philip):** havde møde med programmeringsgruppen og så de fede ting de havde lavet. API med billeder og cloudflare fuldkommen sat op
 
@@ -203,7 +203,7 @@ KC - Kundechef
 
 **PO(Alexander):**
 
-**KC(Reimar):**
+**KC(Reimar):** Holdt kundemøder
 
 **SM(Philip):** Kan ikke få sendt noget igennem fra flutter til api med lorte billede. HJÆÆÆÆÆÆÆÆÆÆÆÆÆÆÆLP. 
 
