@@ -6,6 +6,7 @@ use std::sync::{Mutex, MutexGuard, Arc};
 use auth::AuthorizedUser;
 use models::{Favorite, Review};
 use serde::Deserialize;
+use aws_sdk_s3 as s3;
 
 mod embedded {
     use refinery::embed_migrations;
@@ -197,6 +198,7 @@ async fn delete_review(auth: AuthorizedUser, data:web::Data<AppData>, path: web:
         Err(_) => HttpResponse::InternalServerError().finish(),
     }
 }
+
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {

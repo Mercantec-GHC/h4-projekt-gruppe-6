@@ -54,3 +54,20 @@ impl Review {
     }
 }
 
+#[derive(Serialize)]
+pub struct Image {
+    pub id: i64,
+    pub user_id: String,
+    pub image_url: String,
+}
+
+impl Image {
+    pub fn from_row(row: &Row) -> Resul<Self, Error> {
+        Ok(Image {
+            id: row.get("id")?,
+            user_id: row.get("user_id")?,
+            image_url: row.get("image_url")?,
+        })
+    }
+}
+

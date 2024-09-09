@@ -1,0 +1,5 @@
+CREATE TABLE images (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id TEXT NOT NULL,
+    image_url TEXT NOT NULL
+);
