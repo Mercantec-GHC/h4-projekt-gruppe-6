@@ -74,12 +74,19 @@ class _ProfilePageState extends State<ProfilePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       userData?.profilePicture != null ?
-                      const Icon(
+                     ClipOval(
+                      child: Image(
+                        image: NetworkImage(userData!.profilePicture),
+                        height: 100,
+                        width: 100, // Ensure width matches the height to make it fully round
+                        fit: BoxFit.cover, // This makes sure the image fits inside the circle properly
+                      ),
+                    )
+                      : const Icon(
                         Icons.account_circle,
                         size: 100,
                         color: Colors.grey,
-                      )
-                      : Image(image: NetworkImage('https://pub-bf709b641048489ca70f693673e3e04c.r2.dev/h4picturebucket/PPb83569bef3b9470782d7b42bc4e552ff.png'), height: 100),
+                      ),
                       const SizedBox(height: 20),
                       Text(
                         userData!.username,

@@ -143,10 +143,6 @@ class _ProfilePageState extends State<EditProfilePage> {
                   Navigator.of(context).pop();
 
                   Navigator.pushReplacementNamed(context, '/register');
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Something went wrong! Please contact an admin.')),
-                  );
                 }
               },
             ),
@@ -188,16 +184,46 @@ class _ProfilePageState extends State<EditProfilePage> {
               controller: confirmPasswordInput,
               decoration: InputDecoration(labelText: 'Repeat new password'),
             ),
-            Row(
+            SizedBox(height: 20),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ElevatedButton(onPressed: _pickImageFromGallery, child: Text('Gallery')),
-                ElevatedButton(onPressed: _pickImageFromCamera, child: Text('Camera'))
+                 Text('ProfilePicture',
+                 style: TextStyle(fontSize: 17)),
+                  if (_selectedImage != null)
+                    ClipOval(
+                      child: Image(
+                        image: FileImage(_selectedImage!),
+                        height: 100,
+                        width: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  else
+                    ClipOval(
+                      child: Image(
+                        image: NetworkImage(user!.profilePicture),
+                        height: 100,
+                        width: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  if (_selectedImage != null)
+                    Text(_selectedImage!.path.toString()),
+                    //until here
+                    Row(
+                    children: [
+                      Text('Change using'),
+                      TextButton(onPressed: _pickImageFromGallery, child: Text('Gallery')),
+                      SizedBox(width: 5),
+                      Text('or'),
+                      SizedBox(width: 5),
+                      TextButton(onPressed: _pickImageFromCamera, child: Text('Camera'))
+                    ],
+                  ),
               ],
             ),
-            SizedBox(height: 20),
-            Text('ProfilePicture:'),
-            if(_selectedImage != null)
-            Text(_selectedImage!.path.toString()),
+            SizedBox(height: 40),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
