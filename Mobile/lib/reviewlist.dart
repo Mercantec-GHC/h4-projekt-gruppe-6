@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/base/sidemenu.dart';
 import 'models.dart';
+import 'api.dart' as api;
 
 class ReviewListPage extends StatefulWidget {
   const ReviewListPage({super.key});
@@ -69,6 +70,11 @@ class _ReviewListState extends State<ReviewListPage> {
         )),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
+            if (!await api.isLoggedIn(context)) {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("You must be logged in to do that")));
+              return;
+            }
+
             final review = await Navigator.pushNamed(context, '/create-review', arguments: place) as Review?;
             if (review != null) reviews.add(review);
           },
