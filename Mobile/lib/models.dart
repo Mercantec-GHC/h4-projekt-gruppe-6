@@ -24,6 +24,49 @@ class Favorite {
   }
 }
 
+class Review {
+  int id;
+  String userId;
+  double lat;
+  double lng;
+  String place_name;
+  String place_description;
+  String title;
+  String content;
+  int rating;
+
+  Review(this.id, this.userId, this.lat, this.lng, this.place_name, this.place_description, this.title, this.content, this.rating);
+
+  factory Review.fromJson(Map<String, dynamic> json) {
+    return Review(
+      json['id'],
+      json['user_id'],
+      json['lat'],
+      json['lng'],
+      json['place_name'],
+      json['place_description'],
+      json['title'],
+      json['content'],
+      json['rating'],
+    );
+  }
+}
+
+class Place {
+  String name;
+  String description;
+  LatLng point;
+
+  Place(this.name, this.description, this.point);
+}
+
+class ReviewList {
+  List<Review> reviews;
+  Place place;
+
+  ReviewList(this.reviews, this.place);
+}
+
 class Login {
   String token;
   String id;
@@ -60,10 +103,10 @@ class User {
   }
 }
 
-class SearchResults{
+class SearchResults {
   LatLng location;
   String name;
   String description;
 
-SearchResults(this.location, this.name, this.description);
+  SearchResults(this.location, this.name, this.description);
 }

@@ -7,6 +7,6 @@ CREATE TABLE reviews (
     place_description TEXT NOT NULL,
     title TEXT NOT NULL,
     content TEXT NOT NULL,
-    rating REAL NOT NULL
+    rating INTEGER NOT NULL
 );
 

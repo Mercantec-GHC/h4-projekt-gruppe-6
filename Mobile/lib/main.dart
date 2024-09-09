@@ -4,8 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:mobile/createreview.dart';
 import 'package:mobile/favorites.dart';
 import 'package:mobile/register.dart';
+import 'package:mobile/reviewlist.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
 import 'base/sidemenu.dart';
@@ -45,6 +47,8 @@ class MyApp extends StatelessWidget {
         '/favorites': (context) => const FavoritesPage(),
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
+        '/reviews': (context) => const ReviewListPage(),
+        '/create-review': (context) => const CreateReviewPage(),
       },
     );
   }
@@ -60,6 +64,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   List<Favorite> _favorites = [];
+  List<Review> _reviews = [];
   LatLng? _selectedPoint;
   LatLng _currentPosition = LatLng(55.656707, 10.563214);
   LatLng? _userPosition;
@@ -81,6 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
       if (!isLoggedIn || !mounted) return;
 
       _fetchFavorites();
+      _fetchReviews();
     });
   }
 
@@ -126,6 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() => _selectedPoint = null);
   }
 
+  // Open location bottom menu
   Future<void> _showLocation(LatLng point, String name, String description) async {
     await showModalBottomSheet(
       barrierColor: Colors.black.withOpacity(0.3),
@@ -138,6 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: const EdgeInsets.all(20),
               width: MediaQuery.of(context).size.width,
               child: Row(children: [
+                // Location information
                 Expanded(child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -146,14 +154,28 @@ class _MyHomePageState extends State<MyHomePage> {
                     Text(description),
                   ],
                 )),
+
                 Column(children: [
+                  // Toggle favorite button
                   IconButton(
-                      icon: const Icon(Icons.star),
-                      iconSize: 32,
-                      color: _favorites.where((fav) => fav.lat == point.latitude && fav.lng == point.longitude).isEmpty ? Colors.grey : Colors.yellow,
-                      onPressed: () => _toggleFavorite(point, name, description, setModalState, context)
+                    icon: const Icon(Icons.star),
+                    iconSize: 32,
+                    color: _favorites.where((fav) => fav.lat == point.latitude && fav.lng == point.longitude).isEmpty ? Colors.grey : Colors.yellow,
+                    onPressed: () => _toggleFavorite(point, name, description, setModalState, context)
                   ),
-                  const IconButton(icon: Icon(Icons.rate_review), iconSize: 32, onPressed: null),
+
+                  // View reviews button
+                  IconButton(
+                    icon: const Icon(Icons.rate_review),
+                    iconSize: 32,
+                    color: Colors.grey,
+                    onPressed: () =>
+                      Navigator.pushReplacementNamed(
+                        context,
+                        '/reviews',
+                        arguments: ReviewList(_reviews.where((review) => review.lat == point.latitude && review.lng == point.longitude).toList(), Place(name, description, point))
+                      ),
+                  ),
                 ]),
               ]),
             ),
@@ -216,7 +238,16 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  
+  Future<void> _fetchReviews() async {
+    final response = await api.request(context, api.ApiService.app, 'GET', '/reviews', null);
+    if (response == null) return;
+
+    final List<dynamic> reviews = jsonDecode(response);
+    setState(() {
+      _reviews = reviews.map((review) => Review.fromJson(review)).toList();
+      debugPrint(_reviews.length.toString());
+    });
+  }
 
   Future<void> _getOpenStreetMapArea(LatLng fromGetLocation) async {
   final dynamic location;
@@ -345,7 +376,31 @@ class _MyHomePageState extends State<MyHomePage> {
                         )
                       ],
                     )),
-                ..._favorites.map((favorite) => MarkerLayer(
+                    ..._reviews.map((review) => MarkerLayer(
+                      markers: [
+                        Marker(
+                          point: LatLng(review.lat, review.lng),
+                          width: 30,
+                          height: 50,
+                          alignment: Alignment.center,
+                          child: Stack(
+                            children: [
+                              IconButton(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                icon: const Icon(Icons.location_pin, size: 30, color:Colors.purpleAccent),
+                                onPressed: () => _showLocation(LatLng(review.lat, review.lng), review.place_name, review.place_description),
+                              ),
+                              IconButton(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                icon: const Icon(Icons.location_on_outlined, size: 30, color: Colors.purple),
+                                onPressed: () => _showLocation(LatLng(review.lat, review.lng), review.place_name, review.place_description),
+                              ),
+                            ],
+                          )
+                        )
+                      ],
+                    )),
+                    ..._favorites.map((favorite) => MarkerLayer(
                       markers: [
                         Marker(
                           point: LatLng(favorite.lat, favorite.lng),
