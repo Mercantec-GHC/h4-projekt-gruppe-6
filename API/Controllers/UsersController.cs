@@ -75,7 +75,7 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPut]
-        public async Task<IActionResult> PutUser(UpdateUserDTO UpdateUserDTO)
+        public async Task<IActionResult> PutUser([FromForm ]UpdateUserDTO UpdateUserDTO)
         {
             return await _updateUser.Handle(UpdateUserDTO);
         }

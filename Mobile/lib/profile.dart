@@ -41,6 +41,8 @@ class _ProfilePageState extends State<ProfilePage> {
         Map<String, dynamic> json = jsonDecode(response);
         User jsonUser = User.fromJson(json);
 
+        print(jsonUser.profilePicture);
+
         setState(() {
           userData = jsonUser;
           user = jsonUser;
@@ -71,11 +73,13 @@ class _ProfilePageState extends State<ProfilePage> {
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      userData?.profilePicture != null ?
                       const Icon(
                         Icons.account_circle,
                         size: 100,
                         color: Colors.grey,
-                      ),
+                      )
+                      : Image(image: NetworkImage('https://pub-bf709b641048489ca70f693673e3e04c.r2.dev/h4picturebucket/PPb83569bef3b9470782d7b42bc4e552ff.png'), height: 100),
                       const SizedBox(height: 20),
                       Text(
                         userData!.username,

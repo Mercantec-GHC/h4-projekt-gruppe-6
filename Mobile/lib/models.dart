@@ -44,7 +44,7 @@ class User {
   String id;
   String email;
   String username;  
-  File? profilePicture;
+  String profilePicture;
   DateTime createdAt;
 
   User( this.id, this.email, this.username, this.profilePicture, this.createdAt);

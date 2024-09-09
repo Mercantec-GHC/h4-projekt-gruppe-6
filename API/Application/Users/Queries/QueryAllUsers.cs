@@ -26,7 +26,7 @@ namespace API.Application.Users.Queries
                 Id = user.Id,
                 Email = user.Email,
                 Username = user.Username,
-                ProfilePictureURL = user.ProfilePicture,
+                ProfilePicture = user.ProfilePicture,
             }).ToList();
             return userDTOs;
         }

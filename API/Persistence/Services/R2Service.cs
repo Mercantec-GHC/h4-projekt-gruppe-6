@@ -29,6 +29,7 @@ namespace API.Persistence.Services
             var request = new PutObjectRequest
             {
                 InputStream = fileStream,
+                BucketName = "h4picturebucket",
                 Key = fileName,
                 DisablePayloadSigning = true
             };
@@ -40,7 +41,7 @@ namespace API.Persistence.Services
                 throw new AmazonS3Exception($"Error uploading file to S3. HTTP Status Code: {response.HttpStatusCode}");
             }
 
-            var imageUrl = $"https://pub-bf709b641048489ca70f693673e3e04c.r2.dev/{fileName}";
+            var imageUrl = $"https://pub-bf709b641048489ca70f693673e3e04c.r2.dev/h4picturebucket/{fileName}";
             return imageUrl;
         }
     }

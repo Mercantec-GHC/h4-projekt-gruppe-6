@@ -1,6 +1,5 @@
 
 import 'dart:io';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile/models.dart';
@@ -46,98 +45,68 @@ class _ProfilePageState extends State<EditProfilePage> {
     super.dispose();
   }
 
-  Future _pickImageFromGallery() async{
-    final picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-
-    if(image == null) {return;}
-    else{
-      File compressedFile = await _compressImage(File(image.path));
+ Future _pickImageFromGallery() async{
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (image == null) return;
         setState(() {
-          _selectedImage = compressedFile;
-        });
-    }
-   
+          _selectedImage = File(image.path);
+    });
   }
 
   Future _pickImageFromCamera() async{
-   final picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.camera);
-
-    if(image == null) {return;}
-    else{
-      File compressedFile = await _compressImage(File(image.path));
+    final image = await ImagePicker().pickImage(source: ImageSource.camera);
+    if (image == null) return;
         setState(() {
-          _selectedImage = compressedFile;
-        });
-    }
+          _selectedImage = File(image.path);
+    });
   }
 
-  Future<File> _compressImage(File file) async {
-    final filePath = file.absolute.path;
-    final lastIndex = filePath.lastIndexOf(RegExp(r'.jp'));
-    final splitted = filePath.substring(0, lastIndex);
-    final outPath = "${splitted}_compressed.jpg";
+  
 
-    var result = await FlutterImageCompress.compressAndGetFile(
-      file.absolute.path,
-      outPath,
-      quality: 80,
-      minWidth: 1024,
-      minHeight: 1024,
+ void _saveProfile() async {
+  if (passwordInput.text != confirmPasswordInput.text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Passwords do not match')));
+    return;
+  }
+
+  final prefs = await SharedPreferences.getInstance();
+  String? id = prefs.getString('id');
+
+  if (!mounted) return;
+
+  if (id != null) {
+    final response = await api.putUser(
+      context, 
+      api.ApiService.auth, 
+      'PUT', 
+      '/api/users', 
+      {
+        'id': id,
+        'username': usernameInput.text,
+        'email': emailInput.text,
+        'password': passwordInput.text,
+      },
+      _selectedImage // Pass the selected image to the putUser function
     );
 
-    return File(result!.path);
-  }
-
-  void _saveProfile() async {
-    if (passwordInput.text != confirmPasswordInput.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Passwords do not match')));
-      return;
-    }
-
-    final prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString('id');
-
-    if (!mounted) {
-      return;
-    }
-  if (id != null){
-   final response = await api.request(context, api.ApiService.auth, 'PUT', '/api/users', {
-      'id' : id,
-      'username': usernameInput.text,
-      'email': emailInput.text,
-      'password': passwordInput.text,
-      'profilePicture': _selectedImage,
-    });
-
-    if (!mounted) {
-      return;
-    }
+    if (!mounted) return;
 
     if (response != null) {
-      User updatedUser = User(
-        id,
-        emailInput.text,
-        usernameInput.text,
-        _selectedImage,
-        DateTime.now(),
-      );
       setState(() {
-        user = updatedUser;
+        user = null;
       });
 
       Navigator.of(context).pop(); // Close the dialog
       Navigator.pushReplacementNamed(context, '/profile');
-
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Something went wrong! Please contact an admin.')),
       );
     } 
   }
-  }
+}
+
 
   void _deleteProfile(BuildContext context) {
      showDialog(

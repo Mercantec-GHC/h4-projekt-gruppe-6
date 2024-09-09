@@ -24,7 +24,7 @@ namespace API.Application.Users.Queries
                 return new ConflictObjectResult(new { message = "No user on given Id" });
             }
 
-            return new OkObjectResult(new { id = user.Id, email = user.Email, username = user.Username, profilePictureURL = user.ProfilePicture, createdAt = user.CreatedAt });
+            return new OkObjectResult(new { id = user.Id, email = user.Email, username = user.Username, profilePicture = user.ProfilePicture, createdAt = user.CreatedAt });
 
         }
 

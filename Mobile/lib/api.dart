@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -62,6 +65,92 @@ Future<String?> request(BuildContext? context, ApiService service, String method
 
   return utf8.decode(response.bodyBytes);
 }
+
+Future<String?> putUser(
+  BuildContext? context,
+  ApiService service,
+  String method,
+  String path,
+  Map<String, dynamic> body,
+  File? profilePicture // The image file
+) async {
+  final messenger = context != null ? ScaffoldMessenger.of(context) : null;
+  final prefs = await SharedPreferences.getInstance();
+  final host = const String.fromEnvironment('AUTH_SERVICE_HOST');
+
+  final token = prefs.getString('token');
+  final Map<String, String> headers = {};
+  if (token != null) headers.addAll({'Authorization': 'Bearer $token'});
+
+  // Create the Uri
+  var uri = Uri.parse(host + path);
+
+  // Create a MultipartRequest
+  var request = http.MultipartRequest('PUT', uri);
+  request.headers.addAll(headers);
+
+  // Add form fields
+  request.fields['id'] = body['id'];
+  request.fields['username'] = body['username'];
+  request.fields['email'] = body['email'];
+  request.fields['password'] = body['password'];
+
+  // Attach the file to the request (if provided)
+  if (profilePicture != null) {
+    var fileStream = http.ByteStream(profilePicture.openRead());
+    var length = await profilePicture.length();
+    var multipartFile = http.MultipartFile(
+      'ProfilePicture', // field name matches your backend DTO
+      fileStream,
+      length,
+      filename: profilePicture.path.split('/').last,
+    );
+    request.files.add(multipartFile);
+  }
+
+  try {
+    // Send the request
+    var streamedResponse = await request.send();
+    var response = await http.Response.fromStream(streamedResponse);
+
+    // Handle non-success responses
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      try {
+        final json = jsonDecode(response.body);
+        messenger?.showSnackBar(SnackBar(content: Text(json['message'] ?? json['title'])));
+        debugPrint('API error: ' + json['message']);
+      } catch (e) {
+        debugPrint(e.toString());
+        messenger?.showSnackBar(SnackBar(content: Text('Something went wrong (HTTP ${response.statusCode})')));
+      }
+      return null;
+    }
+
+    return utf8.decode(response.bodyBytes);
+  } catch (e) {
+    debugPrint(e.toString());
+    messenger?.showSnackBar(const SnackBar(content: Text('Unable to connect to server')));
+    return null;
+  }
+}
+
+
+Future<File> _compressImage(File file) async {
+    final filePath = file.absolute.path;
+    final lastIndex = filePath.lastIndexOf(RegExp(r'.jp'));
+    final splitted = filePath.substring(0, lastIndex);
+    final outPath = "${splitted}_compressed.jpg";
+
+    var result = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path,
+      outPath,
+      quality: 80,
+      minWidth: 1024,
+      minHeight: 1024,
+    );
+
+    return File(result!.path);
+  }
 
 Future<bool> isLoggedIn(BuildContext context) async {
   final messenger = ScaffoldMessenger.of(context);
