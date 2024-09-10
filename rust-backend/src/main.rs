@@ -8,6 +8,7 @@ use models::{Favorite, Review, Image};
 use serde::Deserialize;
 use actix_web::web::Bytes;
 use aws_sdk_s3::primitives::ByteStream;
+use rusqlite::types::Null;
 
 mod embedded {
     use refinery::embed_migrations;
@@ -141,14 +142,40 @@ struct CreateReviewRequest {
     title: String,
     content: String,
     rating: i64,
+    image_id: Option<i64>,
 }
 
 #[post("/reviews")]
 async fn create_review(auth: AuthorizedUser, data: web::Data<AppData>, input: web::Json<CreateReviewRequest>) -> impl Responder {
     let db = data.database.lock().unwrap();
 
+    let image_id = match input.image_id {
+        Some(image_id) => image_id.to_string(),
+        None => "NULL".to_string(),
+    }
+
     match db.execute(
-        "INSERT INTO reviews (user_id, lat, lng, place_name, place_description, title, content, rating) VALUES (:user_id, :lat, :lng, :place_name, :place_description, :title, :content, :rating)",
+        "INSERT INTO reviews (
+            user_id,
+            lat,
+            lng,
+            place_name,
+            place_description,
+            title,
+            content,
+            rating,
+            image_id
+        ) VALUES (
+            :user_id,
+            :lat,
+            :lng,
+            :place_name,
+            :place_description,
+            :title,
+            :content,
+            :rating,
+            :image_id
+        )",
         &[
             (":user_id", &auth.user_id),
             (":lat", &input.lat.to_string()),
@@ -158,6 +185,7 @@ async fn create_review(auth: AuthorizedUser, data: web::Data<AppData>, input: we
             (":title", &input.title),
             (":content", &input.content),
             (":rating", &input.rating.to_string()),
+            (":image_id", &image_id),
         ],
     ) {
         Ok(_) => HttpResponse::Created().json(Review {

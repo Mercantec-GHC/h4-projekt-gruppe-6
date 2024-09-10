@@ -1,6 +1,7 @@
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mobile/base/sidemenu.dart';
 import 'models.dart';
 import 'api.dart' as api;
@@ -18,6 +19,7 @@ class _CreateReviewState extends State<CreateReviewPage> {
   final contentInput = TextEditingController();
   Place? place;
   var rating = 0;
+  File? _selectedImage;
 
   @override
   Widget build(BuildContext context) {
@@ -56,8 +58,16 @@ class _CreateReviewState extends State<CreateReviewPage> {
                 ),
                 const SizedBox(height: 30),
 
-                // Review Stars
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(onPressed: _pickImageFromGallery, icon: const Icon(Icons.image, color: Colors.grey), tooltip: "Pick an image from your gallery",),
+                    IconButton(onPressed: _pickImageFromCamera, icon: const Icon(Icons.camera_alt, color: Colors.grey), tooltip: "Take a picture with your camera",),
+                  ],
+                ),
 
+
+                // Review Stars
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -81,6 +91,23 @@ class _CreateReviewState extends State<CreateReviewPage> {
     super.dispose();
     titleInput.dispose();
     contentInput.dispose();
+  }
+  Future _pickImageFromGallery() async {
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (image == null) return;
+
+    setState(() {
+      _selectedImage = File(image.path);
+    });
+  }
+
+  Future _pickImageFromCamera() async {
+    final image = await ImagePicker().pickImage(source: ImageSource.camera);
+    if (image == null) return;
+
+    setState(() {
+      _selectedImage = File(image.path);
+    });
   }
 
   Future<void> _submitReview() async {

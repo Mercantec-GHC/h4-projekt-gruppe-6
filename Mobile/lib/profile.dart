@@ -41,8 +41,6 @@ class _ProfilePageState extends State<ProfilePage> {
         Map<String, dynamic> json = jsonDecode(response);
         User jsonUser = User.fromJson(json);
 
-        print(jsonUser.profilePicture);
-
         setState(() {
           userData = jsonUser;
           user = jsonUser;
@@ -73,15 +71,15 @@ class _ProfilePageState extends State<ProfilePage> {
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      userData?.profilePicture != null ?
-                     ClipOval(
-                      child: Image(
-                        image: NetworkImage(userData!.profilePicture),
-                        height: 100,
-                        width: 100, // Ensure width matches the height to make it fully round
-                        fit: BoxFit.cover, // This makes sure the image fits inside the circle properly
-                      ),
-                    )
+                      userData?.profilePicture != null && userData!.profilePicture.isNotEmpty ?
+                      ClipOval(
+                        child: Image(
+                          image: NetworkImage(userData!.profilePicture),
+                          height: 100,
+                          width: 100, // Ensure width matches the height to make it fully round
+                          fit: BoxFit.cover, // This makes sure the image fits inside the circle properly
+                        ),
+                      )
                       : const Icon(
                         Icons.account_circle,
                         size: 100,

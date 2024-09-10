@@ -48,16 +48,18 @@ class _ProfilePageState extends State<EditProfilePage> {
  Future _pickImageFromGallery() async{
     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image == null) return;
-        setState(() {
-          _selectedImage = File(image.path);
+
+    setState(() {
+      _selectedImage = File(image.path);
     });
   }
 
   Future _pickImageFromCamera() async{
     final image = await ImagePicker().pickImage(source: ImageSource.camera);
     if (image == null) return;
-        setState(() {
-          _selectedImage = File(image.path);
+
+    setState(() {
+      _selectedImage = File(image.path);
     });
   }
 
@@ -156,9 +158,9 @@ class _ProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Profile'),
+        title: const Text('Edit Profile'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context); // Navigates back when the back button is pressed
           },
@@ -170,71 +172,77 @@ class _ProfilePageState extends State<EditProfilePage> {
           children: [
             TextField(
               controller: usernameInput,
-              decoration: InputDecoration(labelText: 'Name'),
+              decoration: const InputDecoration(labelText: 'Name'),
             ),
             TextField(
               controller: emailInput,
-              decoration: InputDecoration(labelText: 'Email'),
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
             TextField(
               controller: passwordInput,
-              decoration: InputDecoration(labelText: 'New password'),
+              decoration: const InputDecoration(labelText: 'New password'),
             ),
             TextField(
               controller: confirmPasswordInput,
-              decoration: InputDecoration(labelText: 'Repeat new password'),
+              decoration: const InputDecoration(labelText: 'Repeat new password'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                 Text('ProfilePicture',
-                 style: TextStyle(fontSize: 17)),
-                  if (_selectedImage != null)
-                    ClipOval(
-                      child: Image(
-                        image: FileImage(_selectedImage!),
-                        height: 100,
-                        width: 100,
-                        fit: BoxFit.cover,
-                      ),
-                    )
-                  else
-                    ClipOval(
-                      child: Image(
-                        image: NetworkImage(user!.profilePicture),
-                        height: 100,
-                        width: 100,
-                        fit: BoxFit.cover,
-                      ),
+                const Text('Profile Picture', style: TextStyle(fontSize: 17)),
+                if (_selectedImage != null)
+                  ClipOval(
+                    child: Image(
+                      image: FileImage(_selectedImage!),
+                      height: 100,
+                      width: 100,
+                      fit: BoxFit.cover,
                     ),
-                  if (_selectedImage != null)
-                    Text(_selectedImage!.path.toString()),
-                    //until here
-                    Row(
+                  )
+                else if (user!.profilePicture != null && user!.profilePicture.isNotEmpty)
+                  ClipOval(
+                    child: Image(
+                      image: NetworkImage(user!.profilePicture),
+                      height: 100,
+                      width: 100,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                else
+                  const Icon(
+                    Icons.account_circle,
+                    size: 100,
+                    color: Colors.grey,
+                  ),
+                if (_selectedImage != null)
+                  Text(_selectedImage!.path.toString()),
+                  //until here
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Change using'),
-                      TextButton(onPressed: _pickImageFromGallery, child: Text('Gallery')),
-                      SizedBox(width: 5),
-                      Text('or'),
-                      SizedBox(width: 5),
-                      TextButton(onPressed: _pickImageFromCamera, child: Text('Camera'))
+                      const Text('Change using'),
+                      TextButton(onPressed: _pickImageFromGallery, child: const Text('Gallery')),
+                      const SizedBox(width: 5),
+                      const Text('or'),
+                      const SizedBox(width: 5),
+                      TextButton(onPressed: _pickImageFromCamera, child: const Text('Camera'))
                     ],
                   ),
               ],
             ),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
                   onPressed: _saveProfile, // Save and pop
-                  child: Text('Save'),
+                  child: const Text('Save'),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 ElevatedButton(
                   onPressed: () => _deleteProfile(context),
-                  child: Text('Delete'),
+                  child: const Text('Delete'),
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.red, // Red text
                   ),
