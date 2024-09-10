@@ -1,4 +1,6 @@
 database.sqlite3*
 efbundle
-appsettings*
+appsettings.Development.json
+appsettings.Production.json
+appsettings.json
 
