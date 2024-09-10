@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/base/sidemenu.dart';
-import 'package:mobile/models.dart';
+import 'package:mobile/models.dart' as models;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
@@ -28,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
 
     // Assuming token is a JSON string
     Map<String, dynamic> json = jsonDecode(response);
-    Login jsonUser = Login.fromJson(json);
+    models.Login jsonUser = models.Login.fromJson(json);
 
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('token', jsonUser.token);

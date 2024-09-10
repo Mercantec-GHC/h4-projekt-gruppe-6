@@ -8,7 +8,10 @@ use models::{Favorite, Review, Image};
 use serde::Deserialize;
 use actix_web::web::Bytes;
 use aws_sdk_s3::primitives::ByteStream;
+use aws_sdk_s3::config::Region;
 use rusqlite::types::Null;
+use env_logger;
+use aws_sdk_s3::config::Credentials;
 
 mod embedded {
     use refinery::embed_migrations;
@@ -152,7 +155,7 @@ async fn create_review(auth: AuthorizedUser, data: web::Data<AppData>, input: we
     let image_id = match input.image_id {
         Some(image_id) => image_id.to_string(),
         None => "NULL".to_string(),
-    }
+    };
 
     match db.execute(
         "INSERT INTO reviews (
@@ -237,7 +240,14 @@ struct CreateImageQuery {
 async fn create_image(auth: AuthorizedUser, data: web::Data<AppData>, bytes: Bytes, query: web::Query<CreateImageQuery>) -> impl Responder {
     let db = data.database.lock().unwrap();
     let config = aws_config::load_from_env().await;
-    let client = aws_sdk_s3::Client::new(&config);
+
+    println!("{:?}", config);
+
+    let s3_config = aws_sdk_s3::config::Builder::from(&config)
+        .force_path_style(true)
+        .build();
+
+    let client = aws_sdk_s3::Client::from_conf(s3_config);
 
     let bucket_name = std::env::var("R2_BUCKET_NAME").expect("R2_BUCKET_NAME must be provided");
     let bucket_url = std::env::var("R2_BUCKET_URL").expect("R2_BUCKET_URL must be provided");
@@ -250,13 +260,14 @@ async fn create_image(auth: AuthorizedUser, data: web::Data<AppData>, bytes: Byt
         .await;
 
     if response.is_err() {
+        println!("{:?}", response.unwrap_err());
         return HttpResponse::InternalServerError().finish();
     }
 
     let image_url = format!("{}/{}/{}", bucket_url, bucket_name, query.file_name);
 
     match db.execute(
-        "INSERT INTO images (user_id, image_url)",
+        "INSERT INTO images (user_id, image_url) VALUES (:user_id, :image_url)",
         &[
             (":user_id", &auth.user_id),
             (":image_url", &image_url),
@@ -273,6 +284,8 @@ async fn create_image(auth: AuthorizedUser, data: web::Data<AppData>, bytes: Byt
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    env_logger::init();
+
     let _ = dotenvy::dotenv();
 
     let port = std::env::var("RUST_BACKEND_PORT")
@@ -306,6 +319,7 @@ async fn main() -> std::io::Result<()> {
             .service(reviews)
             .service(create_review)
             .service(delete_review)
+            .service(create_image)
     })
     .bind(("0.0.0.0", port))?
     .run()

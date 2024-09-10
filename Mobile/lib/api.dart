@@ -1,17 +1,18 @@
 import 'dart:io';
-
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:path/path.dart' as p;
 
 enum ApiService {
   auth,
   app,
 }
 
-Future<String?> request(BuildContext? context, ApiService service, String method, String path, Object? body) async {
+Future<String?> request(BuildContext? context, ApiService service, String method, String path, dynamic body) async {
   final messenger = context != null ? ScaffoldMessenger.of(context) : null;
   final prefs = await SharedPreferences.getInstance();
 
@@ -42,7 +43,7 @@ Future<String?> request(BuildContext? context, ApiService service, String method
       response = await function(
         Uri.parse(host + path),
         headers: headers,
-        body: body != null ? jsonEncode(body) : null,
+        body: body is Uint8List ? body : (body is Object ? jsonEncode(body) : null),
       );
     }
   } catch (e) {
@@ -103,7 +104,7 @@ Future<String?> putUser(
       'ProfilePicture', // field name matches your backend DTO
       fileStream,
       length,
-      filename: profilePicture.path.split('/').last,
+      filename: p.basename(profilePicture.path),
     );
     request.files.add(multipartFile);
   }

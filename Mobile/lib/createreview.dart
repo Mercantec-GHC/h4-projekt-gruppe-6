@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile/base/sidemenu.dart';
-import 'models.dart';
+import 'models.dart' as models;
 import 'api.dart' as api;
+import 'package:path/path.dart' as path;
 
 class CreateReviewPage extends StatefulWidget {
   const CreateReviewPage({super.key});
@@ -17,13 +18,13 @@ class CreateReviewPage extends StatefulWidget {
 class _CreateReviewState extends State<CreateReviewPage> {
   final titleInput = TextEditingController();
   final contentInput = TextEditingController();
-  Place? place;
+  models.Place? place;
   var rating = 0;
   File? _selectedImage;
 
   @override
   Widget build(BuildContext context) {
-    place = ModalRoute.of(context)!.settings.arguments as Place;
+    place = ModalRoute.of(context)!.settings.arguments as models.Place;
 
     return SideMenu(
       selectedIndex: -1,
@@ -111,6 +112,16 @@ class _CreateReviewState extends State<CreateReviewPage> {
   }
 
   Future<void> _submitReview() async {
+    models.Image? image;
+    
+    if (_selectedImage != null) {
+      final fileName = path.basename(_selectedImage!.path);
+      final response = await api.request(context, api.ApiService.app, 'POST', '/images?file_name=$fileName', _selectedImage!.readAsBytesSync());
+      if (response == null) return;
+
+      image = models.Image.fromJson(jsonDecode(response));
+    }
+
     final response = await api.request(context, api.ApiService.app, 'POST', '/reviews', {
       'title': titleInput.text,
       'content': contentInput.text,
@@ -119,11 +130,12 @@ class _CreateReviewState extends State<CreateReviewPage> {
       'rating': rating,
       'lat': place!.point.latitude,
       'lng': place!.point.longitude,
+      'image_id': image?.id,
     });
 
     if (response == null || !mounted) return;
 
-    final review = Review.fromJson(jsonDecode(response));
+    final review = models.Review.fromJson(jsonDecode(response));
 
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Review submitted')));
 

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mobile/base/variables.dart';
-import 'package:mobile/models.dart';
+import 'package:mobile/models.dart' as models;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'base/sidemenu.dart';
 import 'api.dart' as api;
@@ -15,7 +15,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  User? userData;
+  models.User? userData;
 
   @override
   void initState() {
@@ -39,7 +39,7 @@ class _ProfilePageState extends State<ProfilePage> {
         if (response == null) return;
 
         Map<String, dynamic> json = jsonDecode(response);
-        User jsonUser = User.fromJson(json);
+        models.User jsonUser = models.User.fromJson(json);
 
         setState(() {
           userData = jsonUser;

@@ -103,6 +103,22 @@ class User {
   }
 }
 
+class Image {
+  int id;
+  String userId;
+  String imageUrl;
+
+  Image(this.id, this.userId, this.imageUrl);
+
+  factory Image.fromJson(Map<String, dynamic> json) {
+    return Image(
+      json['id'],
+      json['user_id'],
+      json['image_url'],
+    );
+  }
+}
+
 class SearchResults {
   LatLng location;
   String name;
