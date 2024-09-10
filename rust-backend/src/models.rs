@@ -62,7 +62,7 @@ pub struct Image {
 }
 
 impl Image {
-    pub fn from_row(row: &Row) -> Resul<Self, Error> {
+    pub fn from_row(row: &Row) -> Result<Self, Error> {
         Ok(Image {
             id: row.get("id")?,
             user_id: row.get("user_id")?,

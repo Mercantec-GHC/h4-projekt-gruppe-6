@@ -4,9 +4,10 @@ mod models;
 use actix_web::{get, post, delete, Responder, HttpResponse, HttpServer, App, web};
 use std::sync::{Mutex, MutexGuard, Arc};
 use auth::AuthorizedUser;
-use models::{Favorite, Review};
+use models::{Favorite, Review, Image};
 use serde::Deserialize;
-use aws_sdk_s3 as s3;
+use actix_web::web::Bytes;
+use aws_sdk_s3::primitives::ByteStream;
 
 mod embedded {
     use refinery::embed_migrations;
@@ -199,6 +200,48 @@ async fn delete_review(auth: AuthorizedUser, data:web::Data<AppData>, path: web:
     }
 }
 
+#[derive(Deserialize)]
+struct CreateImageQuery {
+    file_name: String,
+}
+
+#[post("/images")]
+async fn create_image(auth: AuthorizedUser, data: web::Data<AppData>, bytes: Bytes, query: web::Query<CreateImageQuery>) -> impl Responder {
+    let db = data.database.lock().unwrap();
+    let config = aws_config::load_from_env().await;
+    let client = aws_sdk_s3::Client::new(&config);
+
+    let bucket_name = std::env::var("R2_BUCKET_NAME").expect("R2_BUCKET_NAME must be provided");
+    let bucket_url = std::env::var("R2_BUCKET_URL").expect("R2_BUCKET_URL must be provided");
+
+    let response = client.put_object()
+        .bucket(bucket_name.clone())
+        .key(query.file_name.clone())
+        .body(ByteStream::from(bytes.to_vec()))
+        .send()
+        .await;
+
+    if response.is_err() {
+        return HttpResponse::InternalServerError().finish();
+    }
+
+    let image_url = format!("{}/{}/{}", bucket_url, bucket_name, query.file_name);
+
+    match db.execute(
+        "INSERT INTO images (user_id, image_url)",
+        &[
+            (":user_id", &auth.user_id),
+            (":image_url", &image_url),
+        ],
+    ) {
+        Ok(_) => HttpResponse::Created().json(Image {
+            id: db.last_insert_rowid(),
+            user_id: auth.user_id,
+            image_url: image_url,
+        }),
+        Err(_) => HttpResponse::InternalServerError().finish(),
+    }
+}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
