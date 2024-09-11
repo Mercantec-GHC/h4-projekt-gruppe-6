@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/base/sidemenu.dart';
@@ -12,6 +14,27 @@ class ReviewListPage extends StatefulWidget {
 }
 
 class _ReviewListState extends State<ReviewListPage> {
+  List<models.User> users = [];
+
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+
+    final arg = ModalRoute.of(context)!.settings.arguments as models.ReviewList;
+    final reviews = arg.reviews;
+
+    final userIds = reviews.map((review) => review.userId).toSet().toList();
+    final queryParams = userIds.map((id) => "userIds=$id");
+    final queryString = "?${queryParams.join("&")}";
+
+    final response = await api.request(context, api.ApiService.auth, 'GET', '/api/Users/UsersByIds$queryString', null);
+    if (response == null) return;
+
+    debugPrint('response: ' + response);
+
+    users = (jsonDecode(response) as List<dynamic>).map((user) => models.User.fromJson(user)).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final arg = ModalRoute.of(context)!.settings.arguments as models.ReviewList;

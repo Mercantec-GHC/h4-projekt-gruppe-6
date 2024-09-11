@@ -22,7 +22,7 @@ Future<String?> request(BuildContext? context, ApiService service, String method
   };
 
   final token = prefs.getString('token');
-  final Map<String, String> headers = {};
+  final Map<String, String> headers = {'Accept': 'application/json'};
   if (token != null) headers.addAll({'Authorization': 'Bearer $token'});
 
   final http.Response response;
@@ -47,7 +47,7 @@ Future<String?> request(BuildContext? context, ApiService service, String method
       );
     }
   } catch (e) {
-    debugPrint(e.toString());
+    debugPrint('Can\'t send requst: ' + e.toString());
     messenger?.showSnackBar(const SnackBar(content: Text('Unable to connect to server')));
     return null;
   }
@@ -58,7 +58,7 @@ Future<String?> request(BuildContext? context, ApiService service, String method
       messenger?.showSnackBar(SnackBar(content: Text(json['message'] ?? json['title'])));
       debugPrint('API error: ' + json['message']);
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint('Can\'t parse response: ' + e.toString());
       messenger?.showSnackBar(SnackBar(content: Text('Something went wrong (HTTP ${response.statusCode})')));
     }
     return null;

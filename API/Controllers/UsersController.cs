@@ -22,36 +22,35 @@ namespace API.Controllers
     {
         private readonly QueryAllUsers _queryAllUsers;
         private readonly QueryUserById _queryUserById;
+        private readonly QueryUsersByIds _queryUsersByIds;
         private readonly CreateUser _createUser;
         private readonly UpdateUser _updateUser;
         private readonly DeleteUser _deleteUser;
         private readonly LoginUser _loginUser;
         private readonly TokenHelper _tokenHelper;
-
-        
         private readonly IUserRepository _repository;
 
         public UsersController(
             QueryAllUsers queryAllUsers,
             QueryUserById queryUserById,
+            QueryUsersByIds queryUsersByIds,
             CreateUser createUser,
             UpdateUser updateUser,
             DeleteUser deleteUser,
             LoginUser loginUser,
             TokenHelper tokenHelper,
             IUserRepository repository
-            )
+        )   
         {
             _queryAllUsers = queryAllUsers;
             _queryUserById = queryUserById;
+            _queryUsersByIds = queryUsersByIds;
             _createUser = createUser;
             _updateUser = updateUser;
             _deleteUser = deleteUser;
             _loginUser = loginUser;
             _tokenHelper = tokenHelper;
             _repository = repository;
-
-            
         }
 
         [HttpPost("login")]
@@ -73,9 +72,15 @@ namespace API.Controllers
             return await _queryUserById.Handle(id);
         }
 
+        [HttpGet("UsersByIds")]
+        public async Task<ActionResult<List<UserDTO>>> GetUsersByIds(List<string> userIds) 
+        {
+            return await _queryUsersByIds.Handle(userIds);
+        }
+
         [Authorize]
         [HttpPut]
-        public async Task<IActionResult> PutUser([FromForm ]UpdateUserDTO UpdateUserDTO)
+        public async Task<IActionResult> PutUser([FromForm] UpdateUserDTO UpdateUserDTO)
         {
             return await _updateUser.Handle(UpdateUserDTO);
         }
