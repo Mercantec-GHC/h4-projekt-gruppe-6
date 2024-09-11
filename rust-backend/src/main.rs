@@ -8,10 +8,7 @@ use models::{Favorite, Review, Image};
 use serde::Deserialize;
 use actix_web::web::Bytes;
 use aws_sdk_s3::primitives::ByteStream;
-use aws_sdk_s3::config::Region;
-use rusqlite::types::Null;
 use env_logger;
-use aws_sdk_s3::config::Credentials;
 
 mod embedded {
     use refinery::embed_migrations;
@@ -117,23 +114,43 @@ async fn delete_favorite(auth: AuthorizedUser, data:web::Data<AppData>, path: we
 }
 
 #[get("/reviews")]
-async fn reviews(data: web::Data<AppData>) -> impl Responder {
+async fn get_reviews(data: web::Data<AppData>) -> impl Responder {
     let db = data.database.lock().unwrap();
 
-    match get_reviews(db) {
+    match fetch_reviews(db) {
         Some(reviews) => HttpResponse::Ok().insert_header(("Content-Type", "application/json; charset=utf-8")).json(reviews),
         None => HttpResponse::InternalServerError().finish(),
     }
 }
 
-fn get_reviews(db: MutexGuard<'_, rusqlite::Connection>) -> Option<Vec<Review>> {
-    Some(
-        db.prepare("SELECT * FROM reviews").ok()?
-            .query_map([], |row| Review::from_row(row))
-            .ok()?
-            .map(|rev| rev.unwrap())
-            .collect()
-    )
+fn fetch_reviews(db: MutexGuard<'_, rusqlite::Connection>) -> Option<Vec<Review>> {
+    let reviews: Vec<Review> = db.prepare("SELECT * FROM reviews").ok()?
+        .query_map([], |row| Review::from_row(row))
+        .ok()?
+        .map(|rev| rev.unwrap())
+        .collect();
+
+    let review_ids = reviews.clone()
+        .into_iter()
+        .map(|r| r.id.to_string())
+        .collect::<Vec<String>>()
+        .join(",");
+
+    let images: Vec<Image> = db.prepare(&format!("SELECT * FROM images WHERE id IN ({})", review_ids)).ok()?
+        .query_map([], |row| Image::from_row(row))
+        .ok()?
+        .map(|img| img.unwrap())
+        .collect();
+
+    Some(reviews.into_iter().map(|r| {
+        let mut review = r.clone();
+
+        if review.image_id.is_some() {
+            review.image = images.clone().into_iter().find(|img| img.id == review.image_id.unwrap());
+        }
+
+        return review;
+    }).collect())
 }
 
 #[derive(Deserialize)]
@@ -201,6 +218,8 @@ async fn create_review(auth: AuthorizedUser, data: web::Data<AppData>, input: we
             title: input.title.clone(),
             content: input.content.clone(),
             rating: input.rating.clone(), 
+            image_id: input.image_id,
+            image: None,
         }),
         Err(_) => HttpResponse::InternalServerError().finish(),
     }
@@ -241,8 +260,6 @@ async fn create_image(auth: AuthorizedUser, data: web::Data<AppData>, bytes: Byt
     let db = data.database.lock().unwrap();
     let config = aws_config::load_from_env().await;
 
-    println!("{:?}", config);
-
     let s3_config = aws_sdk_s3::config::Builder::from(&config)
         .force_path_style(true)
         .build();
@@ -264,7 +281,7 @@ async fn create_image(auth: AuthorizedUser, data: web::Data<AppData>, bytes: Byt
         return HttpResponse::InternalServerError().finish();
     }
 
-    let image_url = format!("{}/{}/{}", bucket_url, bucket_name, query.file_name);
+    let image_url = format!("{}/{}", bucket_url, query.file_name);
 
     match db.execute(
         "INSERT INTO images (user_id, image_url) VALUES (:user_id, :image_url)",
@@ -311,12 +328,13 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(AppData {
                 database: conn.clone(),
             }))
+            .app_data(web::PayloadConfig::new(8_388_608))
             .service(healthcheck)
             .service(authorized)
             .service(favorites)
             .service(create_favorite)
             .service(delete_favorite)
-            .service(reviews)
+            .service(get_reviews)
             .service(create_review)
             .service(delete_review)
             .service(create_image)

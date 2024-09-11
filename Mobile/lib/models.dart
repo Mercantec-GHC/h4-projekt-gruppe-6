@@ -34,8 +34,9 @@ class Review {
   String title;
   String content;
   int rating;
+  Image? image;
 
-  Review(this.id, this.userId, this.lat, this.lng, this.place_name, this.place_description, this.title, this.content, this.rating);
+  Review(this.id, this.userId, this.lat, this.lng, this.place_name, this.place_description, this.title, this.content, this.rating, this.image);
 
   factory Review.fromJson(Map<String, dynamic> json) {
     return Review(
@@ -48,6 +49,7 @@ class Review {
       json['title'],
       json['content'],
       json['rating'],
+      json['image'] != null ? Image.fromJson(json['image']) : null,
     );
   }
 }

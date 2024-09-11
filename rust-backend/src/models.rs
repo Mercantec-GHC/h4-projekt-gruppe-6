@@ -25,7 +25,7 @@ impl Favorite {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone)]
 pub struct Review {
     pub id: i64,
     pub user_id: String,
@@ -36,6 +36,8 @@ pub struct Review {
     pub title: String,
     pub content: String,
     pub rating: i64,
+    pub image_id: Option<i64>,
+    pub image: Option<Image>,
 }
 
 impl Review {
@@ -50,11 +52,13 @@ impl Review {
             title: row.get("title")?,
             content: row.get("content")?,
             rating: row.get("rating")?,
+            image_id: row.get("image_id").ok(),
+            image: None,
         })
     }
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone)]
 pub struct Image {
     pub id: i64,
     pub user_id: String,
