@@ -282,7 +282,6 @@ class _MyHomePageState extends State<MyHomePage> {
     LatLngBounds bounds = _mapController.camera.visibleBounds;
 
     _getOpenStreetMapData(LatLng(bounds.southWest.latitude, bounds.southWest.longitude),LatLng(bounds.northEast.latitude, bounds.northEast.longitude));
-
   }
 
 Future<void> _getOpenStreetMapData(LatLng southWest, LatLng northEast) async {
