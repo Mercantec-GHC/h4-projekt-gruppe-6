@@ -16,7 +16,6 @@ import 'models.dart';
 import 'package:geolocator/geolocator.dart';
 import 'api.dart' as api;
 import 'package:http/http.dart' as http;
-import 'dart:developer';
 
 void main() async {
   // Refresh JWT on startup
@@ -76,7 +75,6 @@ class _MyHomePageState extends State<MyHomePage> {
     accuracy: LocationAccuracy.high,
     distanceFilter: 100,
   );
-
 
     @override
   void didChangeDependencies() {
@@ -249,52 +247,24 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  Future<void> _getOpenStreetMapArea(LatLng fromGetLocation) async {
-  final dynamic location;
-  if (searchBarInput.text == '' && fromGetLocation == const LatLng(00.0000, 00.0000)) {
-    return;
-  }
-  final http.Response response;
-  _searchResults.clear();
-  if (fromGetLocation == const LatLng(00.0000, 00.0000)) {
-      response = await http.get(
-      Uri.parse('https://nominatim.openstreetmap.org/search.php?q=Attractions+in+${searchBarInput.text}&format=jsonv2'),
-      headers: {'User-Agent': 'SkanTravels/1.0'},
-    );
-  }
-  else{
-    response = await http.get(
-      Uri.parse('https://nominatim.openstreetmap.org/search.php?q=Attractions+near+${fromGetLocation.latitude}%2C+${fromGetLocation.longitude}&format=jsonv2'),
-      headers: {'User-Agent': 'SkanTravels/1.0'},
-    );
-  }
+ Future<void> _onSearch() async {
+  final http.Response response = await http.get(
+    Uri.parse('https://nominatim.openstreetmap.org/search.php?q=${searchBarInput.text}&format=jsonv2'),
+    headers: {'User-Agent': 'SkanTravels/1.0'}
+  );
 
-    location = jsonDecode(response.body);
+  final dynamic location = jsonDecode(response.body);
 
-    if (location is List && location.isNotEmpty) {
-      for (var i = 0; i < location.length; i++) {
-        if (location[i]['lat'] != null && location[i]['lon'] != null && location[i]['name'] != null && location[i]['display_name'] != null) {
+  // Move the map to the center of the first search result
+  _mapController.move(
+    LatLng(double.parse(location[0]['lat']), double.parse(location[0]['lon'])), 
+    8
+  );
 
-          double lat = double.parse(location[i]['lat']);
-          double lon = double.parse(location[i]['lon']);
-          String description = location[i]['display_name'];
-          String name = location[i]['name'];
+  // Extract the bounding box and convert to LatLng
+  final List<dynamic> boundingBox = location[0]['boundingbox'];
 
-          if (name == "") {
-            name = description.split(",")[0];
-          }
-          setState(() {
-            _searchResults.add(SearchResults(LatLng(lat, lon), name, description));
-          });
-            
-        }
-
-      }
-      if(fromGetLocation == const LatLng(00.0000, 00.0000)){
-        _mapController.move(_searchResults[0].location, 9);
-      }
-    }
-  
+  _getOpenStreetMapData(LatLng(double.parse(boundingBox[0]), double.parse(boundingBox[2])), LatLng(double.parse(boundingBox[1]), double.parse(boundingBox[3])));
 }
 
  Future<void> _getCurrentLocation() async {
@@ -305,16 +275,34 @@ class _MyHomePageState extends State<MyHomePage> {
       await Geolocator.requestPermission();
     }
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-
-    _getOpenStreetMapArea(LatLng(position.latitude, position.longitude));
-
     _mapController.move(LatLng(position.latitude, position.longitude), 10);
     setState(() {
       _userPosition = LatLng(position.latitude, position.longitude);
     });
+    LatLngBounds bounds = _mapController.camera.visibleBounds;
+
+    _getOpenStreetMapData(LatLng(bounds.southWest.latitude, bounds.southWest.longitude),LatLng(bounds.northEast.latitude, bounds.northEast.longitude));
 
   }
 
+Future<void> _getOpenStreetMapData(LatLng southWest, LatLng northEast) async {
+
+  final http.Response response;
+      response = await http.get(
+      Uri.parse('https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];node["tourism"="attraction"](${southWest.latitude},${southWest.longitude},${northEast.latitude},${northEast.longitude});out geom;'),
+    );
+
+  final parsed = jsonDecode(utf8.decode(response.bodyBytes));
+
+  List<SearchResults> searchResults = parsed['elements']
+      .where((element) => element['tags'] != null && element['tags']['name'] != null)
+      .map<SearchResults>((json) => SearchResults.fromJson(json))
+      .toList();
+
+setState(() {
+    _searchResults = searchResults;
+  });
+}
 
  @override
   Widget build(BuildContext context) {
@@ -368,7 +356,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             children: [
                                 IconButton(
                                 icon: const Icon(Icons.location_pin, size: 30, color: Colors.red),
-                                onPressed: () => _showLocation(point.location, point.name, point.description),
+                                onPressed: () => _showLocation(point.location, point.name, ""),
                               ),
                             ],
                           )
@@ -460,7 +448,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             height: 28,
                             child: ElevatedButton(
                               onPressed: () {
-                                _getOpenStreetMapArea(const LatLng(00.0000, 00.0000));
+                                _onSearch();
                               },
                               child: const Text('Search'),
                             ),
