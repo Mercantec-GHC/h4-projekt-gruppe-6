@@ -192,3 +192,5 @@ void logout() async {
   prefs.remove('refresh-token');
   prefs.remove('id');
 }
+
+//------------------------------OPENAI API------------------------------//

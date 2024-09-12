@@ -106,7 +106,15 @@ class User {
 class SearchResults {
   LatLng location;
   String name;
-  String description;
 
-  SearchResults(this.location, this.name, this.description);
+  SearchResults(this.location, this.name);
+
+  factory SearchResults.fromJson(Map<String, dynamic> json) {
+    double lat = json['lat'];
+    double lon = json['lon'];
+    String name = json['tags']['name'] ?? 'Unknown';
+
+    return SearchResults(LatLng(lat, lon), name);
+  }
 }
+
