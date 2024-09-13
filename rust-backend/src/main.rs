@@ -217,9 +217,11 @@ async fn create_review(auth: AuthorizedUser, data: web::Data<AppData>, input: we
             place_description: input.place_description.clone(),
             title: input.title.clone(),
             content: input.content.clone(),
-            rating: input.rating.clone(), 
+            rating: input.rating.clone(),
             image_id: input.image_id,
-            image: None,
+            image: input.image_id.and_then(|image_id| {
+                db.query_row("SELECT * FROM images WHERE id = :id LIMIT 1", &[(":id", &image_id.to_string())], |row| Image::from_row(row)).ok()
+            }),
         }),
         Err(_) => HttpResponse::InternalServerError().finish(),
     }
