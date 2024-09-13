@@ -4,7 +4,7 @@ import 'package:mobile/models.dart' as models;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
-import 'api.dart' as api;
+import 'services/api.dart' as api;
 import 'base/variables.dart';
 
 class LoginPage extends StatefulWidget {

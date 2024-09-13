@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile/base/sidemenu.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile/base/variables.dart';
-import 'api.dart' as api;
+import 'services/api.dart' as api;
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});

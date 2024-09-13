@@ -3,3 +3,4 @@ API/bin
 API/obj
 .idea
 
+/rust-backend/.env.example

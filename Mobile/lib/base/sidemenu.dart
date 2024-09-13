@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/api.dart' as api;
+import 'package:mobile/services/api.dart' as api;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'variables.dart';
@@ -96,12 +96,20 @@ class _SideMenuState extends State<SideMenu> {
                 Navigator.pushReplacementNamed(context, '/favorites');
               },
             ),
-            ListTile(
+             ListTile(
               title: const Text('Profile'),
               leading: const Icon(Icons.person),
               selected: _selectedIndex == 2,
               onTap: () {
                 Navigator.pushReplacementNamed(context, '/profile');
+              },
+            ),
+            ListTile(
+              title: const Text('GuideBook'),
+              leading: const Icon(Icons.person),
+              selected: _selectedIndex == 5,
+              onTap: () {
+                Navigator.pushReplacementNamed(context, '/tourist-guide-book');
               },
             ),
             const Divider(

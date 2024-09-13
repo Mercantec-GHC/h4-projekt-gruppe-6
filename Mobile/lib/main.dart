@@ -8,13 +8,14 @@ import 'package:mobile/createreview.dart';
 import 'package:mobile/favorites.dart';
 import 'package:mobile/register.dart';
 import 'package:mobile/reviewlist.dart';
+import 'package:mobile/touristguidebook.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
 import 'base/sidemenu.dart';
 import 'profile.dart';
 import 'models.dart';
 import 'package:geolocator/geolocator.dart';
-import 'api.dart' as api;
+import 'services/api.dart' as api;
 import 'package:http/http.dart' as http;
 
 void main() async {
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
         '/register': (context) => const RegisterPage(),
         '/reviews': (context) => const ReviewListPage(),
         '/create-review': (context) => const CreateReviewPage(),
+        '/tourist-guide-book': (context) => const TouristGuideBookPage(),
       },
     );
   }

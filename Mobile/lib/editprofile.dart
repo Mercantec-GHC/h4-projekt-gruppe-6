@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile/models.dart' as models;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'api.dart' as api;
+import 'services/api.dart' as api;
 import 'base/variables.dart';
 
 class EditProfilePage extends StatefulWidget {

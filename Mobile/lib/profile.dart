@@ -4,7 +4,7 @@ import 'package:mobile/base/variables.dart';
 import 'package:mobile/models.dart' as models;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'base/sidemenu.dart';
-import 'api.dart' as api;
+import 'services/api.dart' as api;
 import 'editprofile.dart';
 
 class ProfilePage extends StatefulWidget {
