@@ -43,7 +43,7 @@ namespace API
             builder.Services.AddScoped<DeleteUser>();
             builder.Services.AddScoped<LoginUser>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
-
+            builder.Services.AddScoped<QueryUsersByIds>();
 
             IConfiguration Configuration = builder.Configuration;
 

@@ -1,5 +1,6 @@
 ﻿using API.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 
 namespace API.Persistence.Repositories
@@ -22,6 +23,18 @@ namespace API.Persistence.Repositories
             catch (Exception)
             {
                 return new User();
+            }
+        }
+
+        public async Task<List<User>> QueryUsersByIdsAsync(List<string> ids) 
+        {
+            try
+            {
+                return _context.Users.Where(user => ids.Contains(user.Id)).ToList();
+            }
+            catch (Exception) 
+            {
+                return [];
             }
         }
 
