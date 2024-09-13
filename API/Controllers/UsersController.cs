@@ -73,9 +73,10 @@ namespace API.Controllers
         }
 
         [HttpGet("UsersByIds")]
-        public async Task<ActionResult<List<UserDTO>>> GetUsersByIds(List<string> userIds) 
+        public async Task<ActionResult<List<UserDTO>>> GetUsersByIds(string userIds) 
         {
-            return await _queryUsersByIds.Handle(userIds);
+            List<string> ids = userIds.Split(",").ToList();
+            return await _queryUsersByIds.Handle(ids);
         }
 
         [Authorize]

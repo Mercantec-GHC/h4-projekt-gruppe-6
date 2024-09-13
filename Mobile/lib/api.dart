@@ -13,6 +13,8 @@ enum ApiService {
 }
 
 Future<String?> request(BuildContext? context, ApiService service, String method, String path, dynamic body) async {
+  debugPrint('$method $path');
+
   final messenger = context != null ? ScaffoldMessenger.of(context) : null;
   final prefs = await SharedPreferences.getInstance();
 
@@ -22,7 +24,7 @@ Future<String?> request(BuildContext? context, ApiService service, String method
   };
 
   final token = prefs.getString('token');
-  final Map<String, String> headers = {'Accept': 'application/json'};
+  final Map<String, String> headers = {};
   if (token != null) headers.addAll({'Authorization': 'Bearer $token'});
 
   final http.Response response;
@@ -58,7 +60,7 @@ Future<String?> request(BuildContext? context, ApiService service, String method
       messenger?.showSnackBar(SnackBar(content: Text(json['message'] ?? json['title'])));
       debugPrint('API error: ' + json['message']);
     } catch (e) {
-      debugPrint('Can\'t parse response: ' + e.toString());
+      debugPrint('Can\'t parse response: ' + response.body);
       messenger?.showSnackBar(SnackBar(content: Text('Something went wrong (HTTP ${response.statusCode})')));
     }
     return null;

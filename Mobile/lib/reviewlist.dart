@@ -16,6 +16,10 @@ class ReviewListPage extends StatefulWidget {
 class _ReviewListState extends State<ReviewListPage> {
   List<models.User> users = [];
 
+  models.User? _getReviewUser(models.Review review) {
+    return users.firstWhere((user) => user.id == review.userId);
+  }
+
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
@@ -24,10 +28,8 @@ class _ReviewListState extends State<ReviewListPage> {
     final reviews = arg.reviews;
 
     final userIds = reviews.map((review) => review.userId).toSet().toList();
-    final queryParams = userIds.map((id) => "userIds=$id");
-    final queryString = "?${queryParams.join("&")}";
 
-    final response = await api.request(context, api.ApiService.auth, 'GET', '/api/Users/UsersByIds$queryString', null);
+    final response = await api.request(context, api.ApiService.auth, 'GET', '/api/Users/UsersByIds?userIds=' + userIds.join(','), null);
     if (response == null) return;
 
     debugPrint('response: ' + response);
@@ -79,12 +81,14 @@ class _ReviewListState extends State<ReviewListPage> {
                         Text(review.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
                         Text(review.content),
                         const SizedBox(height: 10),
-                        if (review.image != null) Image.network(review.image!.imageUrl, height: 200,),
+                        if (review.image != null) Image.network(review.image!.imageUrl, height: 200),
                         if (review.image != null) const SizedBox(height: 15),
                         Row(children: [
                           for (var i = 0; i < review.rating; i++) const Icon(Icons.star, color: Colors.yellow),
                           for (var i = review.rating; i < 5; i++) const Icon(Icons.star_border),
                         ]),
+                        const SizedBox(height: 10),
+                        Text('Submitted by ' + (_getReviewUser(review)?.username ?? ''), style: const TextStyle(color: Colors.grey, fontSize: 12)),
                       ],
                     ),
                   ),
