@@ -80,9 +80,23 @@ class _ReviewListState extends State<ReviewListPage> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.only(top: 3),
-                        child: Icon(Icons.rate_review, color: Colors.purple, size: 36),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 3),
+                        child:
+                          _getReviewUser(review)?.profilePicture.isNotEmpty == true
+                          ? ClipOval(
+                              child: Image(
+                                image: NetworkImage(_getReviewUser(review)!.profilePicture),
+                                height: 36,
+                                width: 36,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : const Icon(
+                            Icons.account_circle,
+                            size: 36,
+                            color: Colors.grey,
+                          )
                       ),
                       const SizedBox(width: 20),
                       Expanded(
