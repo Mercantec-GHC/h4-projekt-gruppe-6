@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/base/sidemenu.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'models.dart' as models;
 import 'api.dart' as api;
 
@@ -15,6 +16,8 @@ class ReviewListPage extends StatefulWidget {
 
 class _ReviewListState extends State<ReviewListPage> {
   List<models.User> _users = [];
+  List<models.Review> _reviews = [];
+  String? _currentUserId;
 
   models.User? _getReviewUser(models.Review review) {
     try {
@@ -24,18 +27,47 @@ class _ReviewListState extends State<ReviewListPage> {
     }
   }
 
+  void _confirmDeleteReview(models.Review review) {
+    showDialog(context: context, builder: (BuildContext context) =>
+      AlertDialog(
+        title: const Text('Delete review'),
+        content: const Text('Are you sure you want to delete this review?'),
+        actions: [
+          TextButton(child: const Text('Cancel'), onPressed: () => Navigator.pop(context)),
+          TextButton(child: const Text('Delete', style: TextStyle(color: Colors.red)), onPressed: () => _deleteReview(review)),
+        ]
+      )
+    );
+  }
+
+  void _deleteReview(models.Review review) async {
+    Navigator.pop(context);
+
+    final response = await api.request(context, api.ApiService.app, 'DELETE', '/reviews/${review.id}', null);
+    if (response == null) return;
+
+    setState(() {
+      _reviews = _reviews.where((r) => r.id != review.id).toList();
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Review deleted successfully')));
+  }
+
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
 
-    final arg = ModalRoute.of(context)!.settings.arguments as models.ReviewList;
-    final reviews = arg.reviews;
+    final prefs = await SharedPreferences.getInstance();
+    _currentUserId = prefs.getString('id');
 
-    if (reviews.isEmpty) {
+    final arg = ModalRoute.of(context)!.settings.arguments as models.ReviewList;
+    _reviews = arg.reviews;
+
+    if (_reviews.isEmpty || !mounted) {
       return;
     }
 
-    final userIds = reviews.map((review) => review.userId).toSet().toList();
+    final userIds = _reviews.map((review) => review.userId).toSet().toList();
 
     final response = await api.request(context, api.ApiService.auth, 'GET', '/api/Users/UsersByIds?userIds=' + userIds.join(','), null);
     if (response == null) return;
@@ -48,21 +80,20 @@ class _ReviewListState extends State<ReviewListPage> {
   @override
   Widget build(BuildContext context) {
     final arg = ModalRoute.of(context)!.settings.arguments as models.ReviewList;
-    final reviews = arg.reviews;
     final place = arg.place;
 
     return SideMenu(
       selectedIndex: -1,
       body: Scaffold(
         backgroundColor: const Color(0xFFF9F9F9),
-        body: reviews.isEmpty
+        body: _reviews.isEmpty
           ? const Center(child: Text('No reviews yet. Be the first to review this place'))
           : SingleChildScrollView(child: Container(
             decoration: const BoxDecoration(color: Color(0xFFF9F9F9)),
             width: MediaQuery.of(context).size.width,
             padding: const EdgeInsets.all(20.0),
             child: Column(children: [
-              for (final review in reviews)
+              for (final review in _reviews)
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
@@ -93,17 +124,20 @@ class _ReviewListState extends State<ReviewListPage> {
                               ),
                             )
                           : const Icon(
-                            Icons.account_circle,
-                            size: 36,
-                            color: Colors.grey,
-                          )
+                              Icons.account_circle,
+                              size: 36,
+                              color: Colors.grey,
+                            )
                       ),
                       const SizedBox(width: 20),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(review.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
+                            Row(children: [
+                              Expanded(child: Text(review.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24))),
+                              if (review.userId == _currentUserId) IconButton(onPressed: () => _confirmDeleteReview(review), icon: const Icon(Icons.delete, color: Colors.grey)),
+                            ]),
                             Text(review.content),
                             const SizedBox(height: 10),
                             if (review.image != null) Image.network(review.image!.imageUrl, height: 200),
@@ -130,7 +164,7 @@ class _ReviewListState extends State<ReviewListPage> {
             }
 
             final review = await Navigator.pushNamed(context, '/create-review', arguments: place) as models.Review?;
-            if (review != null) reviews.add(review);
+            if (review != null) _reviews.add(review);
           },
           backgroundColor: Colors.blue,
           focusColor: Colors.blueGrey,
