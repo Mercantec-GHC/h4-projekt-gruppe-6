@@ -6,3 +6,6 @@ Vi vil udvikle en TuristApp for SkanTravles, som gør brug af telefonens sensore
 [Kravspecifikation](Docs/kravspec.md)
 
 [Logbog](Docs/SCRUM%20Logbog.md)
+
+[Setup guide](Docs/setup.md)
+
