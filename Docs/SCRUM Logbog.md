@@ -151,7 +151,7 @@ KC - Kundechef
 
 ## Torsdag
 
-**SM(Alexander):**
+**SM(Alexander):** Samarbejdede med Reimar omkring Refresh-tokens, mest med ide-fasen
 
 **PO(Reimar):** Begyndt på implementering af refresh tokens, fikset en fejl med en openssl dependency til vores release-flow
 
@@ -159,7 +159,7 @@ KC - Kundechef
 
 ## Fredag
 
-**SM(Alexander):**
+**SM(Alexander):** Holdt kundemøder
 
 **PO(Reimar):** Holdt kundemøder
 
@@ -177,7 +177,7 @@ KC - Kundechef
 
 ## Tirsdag
 
-**PO(Alexander):**
+**PO(Alexander):** Pair-programmede med Reimar om nedenstående features
 
 **KC(Reimar):** Implementeret reviews i rust backenden, fået vist dem som location pins på kortet
 
@@ -185,7 +185,7 @@ KC - Kundechef
 
 ## Onsdag
 
-**PO(Alexander):**
+**PO(Alexander):** Pair-programmede med Reimar om nedenstående features
 
 **KC(Reimar):** Implementeret review-liste når man klikker ind på én
 
@@ -193,7 +193,7 @@ KC - Kundechef
 
 ## Torsdag
 
-**PO(Alexander):**
+**PO(Alexander):** Pair-programmede med Reimar om nedenstående features
 
 **KC(Reimar):** Lavet create review-side, tilføjet stjerner til review-liste
 
@@ -201,7 +201,7 @@ KC - Kundechef
 
 ## Fredag
 
-**PO(Alexander):**
+**PO(Alexander):** Hjalp med kundemøder 
 
 **KC(Reimar):** Holdt kundemøder
 
