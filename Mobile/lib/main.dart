@@ -18,6 +18,8 @@ import 'api.dart' as api;
 import 'package:http/http.dart' as http;
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   // Refresh JWT on startup
   final prefs = await SharedPreferences.getInstance();
   if (prefs.getString("token") != null && prefs.getString("refresh-token") != null) {
